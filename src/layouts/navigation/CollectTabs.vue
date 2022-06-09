@@ -117,12 +117,12 @@ export default {
 .body--light
     .active
         color: white
-        background: v-bind(getPrimary)
+        background: $primary
         border-radius: 3px
 
 .body--dark
     .active
         color: white
-        background: v-bind(getPrimary)
+        background: $primary
         border-radius: 3px
 </style>

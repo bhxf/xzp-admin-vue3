@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  go-admin-web:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: go-admin-web
+    ports:
+      - "80:80"
+    restart: always

@@ -4,6 +4,18 @@ import {quasar, transformAssetUrls} from '@quasar/vite-plugin'
 import * as path from "path";
 
 export default defineConfig({
+  build: {
+    target: 'es2015',
+    outDir: './docker/dist',
+    terserOptions: {
+      compress: {
+        keep_infinity: true,
+        drop_console: true,
+      },
+    },
+    brotliSize: false,
+    chunkSizeWarningLimit: 2000,
+  },
   resolve: {
     alias: [{find: '@', replacement: path.resolve(__dirname, './src')}],
   },
