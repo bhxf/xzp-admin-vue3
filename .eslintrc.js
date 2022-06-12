@@ -14,7 +14,7 @@ module.exports = {
     },
   },
   extends: [
-    'plugin:vue/essential',
+    'plugin:vue/vue3-recommended',
     'airbnb-base',
   ],
   parserOptions: {
@@ -27,6 +27,9 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    'no-param-reassign': [2, {
+      props: false,
+    }],
     'import/extensions': [
       'error',
       'ignorePackages',
@@ -37,5 +40,9 @@ module.exports = {
         tsx: 'never',
       },
     ],
+    'vue/no-reserved-component-names': ['error', {
+      disallowVueBuiltInComponents: false,
+      disallowVue3BuiltInComponents: false,
+    }],
   },
 };

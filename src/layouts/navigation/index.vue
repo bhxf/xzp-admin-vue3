@@ -5,8 +5,14 @@
     :breakpoint="500"
   >
     <q-scroll-area class="fit">
-      <q-list padding class="menu-list">
-        <q-item clickable v-ripple>
+      <q-list
+        padding
+        class="menu-list"
+      >
+        <q-item
+          v-ripple
+          clickable
+        >
           <q-item-section avatar>
             <q-icon name="inbox" />
           </q-item-section>
@@ -15,22 +21,19 @@
             Inbox
           </q-item-section>
         </q-item>
-
       </q-list>
-
     </q-scroll-area>
   </q-drawer>
-
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import { ref } from 'vue';
 
-const drawer = ref(false)
+const drawer = ref(false);
 </script>
 <script lang="ts">
 export default {
-  name: "LayoutNavigation",
+  name: 'LayoutNavigation',
 };
 </script>
 <style scoped lang="sass">

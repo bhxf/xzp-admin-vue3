@@ -1,101 +1,141 @@
 <template>
-    <q-header>
-        <div class="layout-header items-center row no-wrap full-width q-gutter-x-sm">
-            <div class="flex col-auto q-gutter-x-md justify-start items-center q-pl-sm">
-                <q-btn rounded flat dense>
-                    <q-avatar size="36px">
-                        <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg"/>
-                    </q-avatar>
-                </q-btn>
+  <q-header>
+    <div class="layout-header items-center row no-wrap full-width q-gutter-x-sm">
+      <div class="flex col-auto q-gutter-x-md justify-start items-center q-pl-sm">
+        <q-btn
+          rounded
+          flat
+          dense
+        >
+          <q-avatar size="36px">
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
+          </q-avatar>
+        </q-btn>
+      </div>
+
+      <collect-tabs />
+
+      <q-space />
+
+      <div class="flex col-auto justify-center items-center row q-gutter-x-sm q-mr-sm">
+        <q-btn
+          flat
+          dense
+          round
+          icon="r_translate"
+        />
+
+        <q-toggle
+          v-model="themMode"
+          color="amber"
+          checked-icon="dark_mode"
+          unchecked-icon="light_mode"
+        />
+
+        <q-btn
+          color="blue-6"
+          dense
+          rounded
+          unelevated
+        >
+          <q-badge
+            color="red"
+            rounded
+            floating
+          />
+          <div class="flex q-gutter-x-sm items-center justify-center">
+            <q-avatar size="36px">
+              <img :src="baseStore.user?.headerImg">
+            </q-avatar>
+
+            <div class="text-weight-bold">
+              {{ baseStore.user?.userName }}
             </div>
+          </div>
 
-            <collect-tabs/>
-
-            <q-space/>
-
-            <div class="flex col-auto justify-center items-center row q-gutter-x-sm q-mr-sm">
-
-                <q-btn flat dense round icon="r_translate"/>
-
-                <q-toggle
-                    v-model="themMode"
-                    color="amber"
-                    checked-icon="dark_mode"
-                    unchecked-icon="light_mode"
+          <q-menu
+            transition-show="flip-right"
+            transition-hide="flip-left"
+          >
+            <div class="row no-wrap q-pa-md">
+              <div
+                class="column q-gutter-y-xs"
+                style="min-width: 150px;"
+              >
+                <div class="text-h6 q-mb-md">
+                  个人设置
+                </div>
+                <q-select
+                  v-model="role"
+                  standout
+                  dense
+                  label="当前角色"
                 />
+                <q-select
+                  v-model="dept"
+                  standout
+                  dense
+                  label="当前部门"
+                />
+              </div>
 
-                <q-btn color="blue-6" dense rounded unelevated>
-                    <q-badge color="red" rounded floating />
-                    <div class="flex q-gutter-x-sm items-center justify-center">
-                        <q-avatar size="36px">
-                            <img :src="baseStore.user?.headerImg">
-                        </q-avatar>
+              <q-separator
+                vertical
+                inset
+                class="q-mx-lg"
+              />
 
-                        <div class="text-weight-bold">{{baseStore.user?.userName}}</div>
-                    </div>
+              <div class="column items-center">
+                <q-avatar size="72px">
+                  <img :src="baseStore.user.headerImg">
+                </q-avatar>
 
-                    <q-menu
-                        transition-show="flip-right"
-                        transition-hide="flip-left"
-                    >
-                        <div class="row no-wrap q-pa-md">
-                            <div class="column q-gutter-y-xs" style="min-width: 150px;">
-                                <div class="text-h6 q-mb-md">个人设置</div>
-                                <q-select standout dense label="当前角色"/>
-                                <q-select standout dense label="当前部门"/>
-                            </div>
+                <div class="text-subtitle1 q-mt-md q-mb-xs">
+                  {{ baseStore.user?.userName }}
+                </div>
 
-                            <q-separator vertical inset class="q-mx-lg" />
-
-                            <div class="column items-center">
-                                <q-avatar size="72px">
-                                    <img :src="baseStore.user.headerImg">
-                                </q-avatar>
-
-                                <div class="text-subtitle1 q-mt-md q-mb-xs">{{baseStore.user?.userName}}</div>
-
-                                <q-btn
-                                    @click="baseStore.handlerLogout"
-                                    color="primary"
-                                    label="退出"
-                                    push
-                                    size="sm"
-                                    v-close-popup
-                                />
-                            </div>
-                        </div>
-                    </q-menu>
-                </q-btn>
-
+                <q-btn
+                  v-close-popup
+                  color="primary"
+                  label="退出"
+                  push
+                  size="sm"
+                  @click="baseStore.handlerLogout"
+                />
+              </div>
             </div>
-        </div>
-    </q-header>
+          </q-menu>
+        </q-btn>
+      </div>
+    </div>
+  </q-header>
 </template>
 
 <script setup lang="ts">
-import {useQuasar} from "quasar";
-import {computed, ref, watch} from "vue";
-import CollectTabs from "@/layouts/navigation/CollectTabs.vue";
-import {useBaseStore} from "@/store/system/base";
-import {useLayoutStore} from "@/store/settings/layout";
+import { useQuasar } from 'quasar';
+import { computed, ref, watch } from 'vue';
+import CollectTabs from '@/layouts/navigation/CollectTabs.vue';
+import { useBaseStore } from '@/store/system/base';
+import { useLayoutStore } from '@/store/settings/layout';
 
-const $q = useQuasar()
-const baseStore = useBaseStore()
-const themMode = ref(false)
+const $q = useQuasar();
+const baseStore = useBaseStore();
+const themMode = ref(false);
+const role = ref('');
+const dept = ref('');
 
-watch(themMode,()=>{
-    handleDark()
-})
+watch(themMode, () => {
+  handleDark();
+});
 const handleDark = () => {
-    $q.dark.toggle()
-}
-const isDark = computed(() => $q.dark.isActive)
-const headerHeight = computed(()=>useLayoutStore().headerHeight+'px')
+  $q.dark.toggle();
+};
+const headerHeight = computed(() => `${useLayoutStore().headerHeight}px`);
 
 </script>
 <script lang="ts">
 export default {
-    name: "LayoutHeader",
+  name: 'LayoutHeader',
 };
 </script>
 

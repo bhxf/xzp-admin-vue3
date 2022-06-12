@@ -5,7 +5,7 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    container_name: go-admin-web
+    container_name: go-admin-web-1
     ports:
       - "80:80"
     restart: always

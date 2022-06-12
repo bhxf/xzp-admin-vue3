@@ -1,24 +1,24 @@
 <template>
-    <q-scroll-area
-        v-bind="$attrs"
-        ref="scrollAreaRef"
-        class="col"
-    >
-        <slot/>
-    </q-scroll-area>
+  <q-scroll-area
+    v-bind="$attrs"
+    ref="scrollAreaRef"
+    class="col"
+  >
+    <slot />
+  </q-scroll-area>
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
-import {QScrollArea} from "quasar";
+import { ref } from 'vue';
+import { QScrollArea } from 'quasar';
 
-const scrollAreaRef = ref<QScrollArea|null>(null)
+const scrollAreaRef = ref<QScrollArea|null>(null);
 
-defineExpose({scrollAreaRef:scrollAreaRef})
+defineExpose({ scrollAreaRef });
 </script>
 <script lang="ts">
 export default {
-    name: "XScrollArea",
+  name: 'XScrollArea',
 };
 </script>
 

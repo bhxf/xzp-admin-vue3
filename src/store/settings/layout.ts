@@ -1,4 +1,4 @@
-import {defineStore} from 'pinia'
+import { defineStore } from 'pinia';
 
 interface LayoutStore {
     headerHeight:number,
@@ -8,21 +8,19 @@ interface LayoutStore {
 }
 
 export const useLayoutStore = defineStore('LayoutStore', {
-    state: (): LayoutStore => {
-        return {
-            headerHeight: 55,
-            navHeight: 36,
-            pagePadding: 60,
-            toolsWidth: 50,
-        }
+  state: (): LayoutStore => ({
+    headerHeight: 55,
+    navHeight: 36,
+    pagePadding: 60,
+    toolsWidth: 50,
+  }),
+  getters: {
+    getPageHeight():string {
+      return `calc(100vh - ${this.headerHeight + this.navHeight + this.pagePadding}px)`;
     },
-    getters: {
-        getPageHeight():string{
-            return `calc(100vh - ${this.headerHeight+this.navHeight+this.pagePadding}px)`
-        },
-        getToolsHeight():string{
-            return `calc(100vh - ${this.headerHeight+this.navHeight}px)`
-        },
+    getToolsHeight():string {
+      return `calc(100vh - ${this.headerHeight + this.navHeight}px)`;
     },
-    actions: {}
-})
+  },
+  actions: {},
+});

@@ -1,7 +1,5 @@
-// eslint-disable-next-line import/extensions
 import { formatChip } from '@/tools/format';
-import { Field } from '@/components/XForm/index';
-import { Column, SearchColumn } from '@/components/XTable/index';
+import { Column, Field, SearchColumn } from '@/components';
 
 export const dictionaryForm: Field[] = [
   {
@@ -94,7 +92,6 @@ export const dictionaryColumns: Column[] = [
     name: 'status',
     label: '是否启用',
     align: 'left',
-    pt: 'q-pt-none',
     edit: true,
     components: 'toggle',
     defaultValue: true,

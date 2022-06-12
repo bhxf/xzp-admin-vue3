@@ -1,6 +1,6 @@
-import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
-import {useRouter} from "@/plugins/router";
-import {notify} from "@/hooks/message";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { useRouter } from '@/plugins/router';
+import { notify } from '@/hooks/message';
 
 export enum settingsEnum {
     TOKEN = 'x-token',
@@ -23,107 +23,103 @@ interface XData<T> {
 }
 
 class XRequest {
-    config: AxiosRequestConfig;
-    instance: AxiosInstance;
+  config: AxiosRequestConfig;
 
-    constructor(options: AxiosRequestConfig) {
-        this.config = options;
-        this.instance = axios.create(options);
-        this.setupInterceptor();
-    }
+  instance: AxiosInstance;
 
-    setupInterceptor(): void {
-        this.instance.interceptors.request.use(
-            (config: AxiosRequestConfig) => {
-                return new Promise((resolve, reject) => {
+  constructor(options: AxiosRequestConfig) {
+    this.config = options;
+    this.instance = axios.create(options);
+    this.setupInterceptor();
+  }
 
-                    const ignoreAuth = config.headers?.['ignoreAuth']
-                    //忽略授权
-                    if (ignoreAuth === true) {
-                        resolve(config)
-                        return;
-                    }
+  setupInterceptor(): void {
+    this.instance.interceptors.request.use(
+      (config: AxiosRequestConfig) => new Promise((resolve, reject) => {
+        const ignoreAuth = config.headers?.ignoreAuth;
+        // 忽略授权
+        if (ignoreAuth === true) {
+          resolve(config);
+          return;
+        }
 
-                    const xToken = sessionStorage.getItem(settingsEnum.TOKEN)
-                    if (!xToken) {
-                        reject('账号已失效')
-                        return
-                    }
+        const xToken = sessionStorage.getItem(settingsEnum.TOKEN);
+        if (!xToken) {
+          reject('账号已失效');
+          return;
+        }
 
-                    config.headers && (config.headers[settingsEnum.TOKEN_NAME] = xToken)
-                    resolve(config)
-
-                })
-            },
-            (error: any) => {
-                notify.error(error)
-            }
-        )
-        this.instance.interceptors.response.use(
-            (config: AxiosResponse) => {
-                const data = config.data
-                const route = useRouter
-                return new Promise((resolve, reject) => {
-
-                    if (data.code !== 0) {
-                        notify.error(data.msg)
-                        reject(data.msg)
-
-                        //是否需要跳转登录
-                        if (data.msg === '授权已过期，请重新登录') {
-                            route.push({path: '/login'})
-                        }
-
-                        return
-                    }
-
-                    resolve(data)
-                })
-            },
-            (error: any) => {
-                notify.error(error)
-                return Promise.reject(error)
-            }
-        )
-    }
-
-    // 类型参数的作用，T决定AxiosResponse实例中data的类型
-    request<T = any>(config: AxiosRequestConfig): Promise<T> {
+        config.headers && (config.headers[settingsEnum.TOKEN_NAME] = xToken);
+        resolve(config);
+      }),
+      (error: any) => {
+        notify.error(error);
+      },
+    );
+    this.instance.interceptors.response.use(
+      (config: AxiosResponse) => {
+        const { data } = config;
+        const route = useRouter;
         return new Promise((resolve, reject) => {
-            this.instance
-                .request<any, XData<T>>(config)
-                .then((res) => {
-                    resolve(res.data);
-                })
-                .catch((err) => {
-                    reject(err);
-                });
+          if (data.code !== 0) {
+            notify.error(data.msg);
+            reject(data.msg);
+
+            // 是否需要跳转登录
+            if (data.msg === '授权已过期，请重新登录') {
+              route.push({ path: '/login' });
+            }
+
+            return;
+          }
+
+          resolve(data);
         });
-    }
+      },
+      (error: any) => {
+        notify.error(error);
+        return Promise.reject(error);
+      },
+    );
+  }
 
-    get<T = any>(config: AxiosRequestConfig): Promise<T> {
-        return this.request({...config, method: 'GET'});
-    }
+  // 类型参数的作用，T决定AxiosResponse实例中data的类型
+  request<T = any>(config: AxiosRequestConfig): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.instance
+        .request<any, XData<T>>(config)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
 
-    post<T = any>(config: AxiosRequestConfig): Promise<T> {
-        return this.request({...config, method: 'POST'});
-    }
+  get<T = any>(config: AxiosRequestConfig): Promise<T> {
+    return this.request({ ...config, method: 'GET' });
+  }
 
-    delete<T = any>(config: AxiosRequestConfig): Promise<T> {
-        return this.request({...config, method: 'DELETE'});
-    }
+  post<T = any>(config: AxiosRequestConfig): Promise<T> {
+    return this.request({ ...config, method: 'POST' });
+  }
 
-    put<T = any>(config: AxiosRequestConfig): Promise<T> {
-        return this.request({...config, method: 'PUT'});
-    }
+  delete<T = any>(config: AxiosRequestConfig): Promise<T> {
+    return this.request({ ...config, method: 'DELETE' });
+  }
 
-    patch<T = any>(config: AxiosRequestConfig): Promise<T> {
-        return this.request({...config, method: 'PATCH'});
-    }
+  put<T = any>(config: AxiosRequestConfig): Promise<T> {
+    return this.request({ ...config, method: 'PUT' });
+  }
+
+  patch<T = any>(config: AxiosRequestConfig): Promise<T> {
+    return this.request({ ...config, method: 'PATCH' });
+  }
 }
 
-export default XRequest
+export default XRequest;
 
 export const xRequest = new XRequest({
-    baseURL: '/api',
-})
+  baseURL: '/api',
+});

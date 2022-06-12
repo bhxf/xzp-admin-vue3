@@ -1,4 +1,4 @@
-import {xRequest} from "@/tools/http";
+import { xRequest } from '@/tools/http';
 
 export interface CaptchaResponse {
     captchaId: string
@@ -55,10 +55,10 @@ export interface LoginResponse {
     expiresAt: number;
 }
 
-export function getCaptcha():Promise<CaptchaResponse>{
-    return xRequest.get({url:'/base/captcha',headers:{ignoreAuth:true},params:new Date().getTime()})
+export function getCaptcha():Promise<CaptchaResponse> {
+  return xRequest.get({ url: '/base/captcha', headers: { ignoreAuth: true }, params: new Date().getTime() });
 }
 
 export function login(data:LoginRequest):Promise<LoginResponse> {
-    return xRequest.post({url:'/base/login',headers:{ignoreAuth:true},data})
+  return xRequest.post({ url: '/base/login', headers: { ignoreAuth: true }, data });
 }

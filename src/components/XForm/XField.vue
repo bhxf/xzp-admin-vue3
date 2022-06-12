@@ -1,20 +1,28 @@
 <template>
-    <component
-        v-model="val"
-        v-bind="{...componentsProps,...errorObj}"
+  <component
+    v-bind="{...componentsProps,...errorObj}"
+    :is="components"
 
-        :label="label"
-        :is="components"
-        :required="required"
+    v-model="val"
+    :label="label"
+    :required="required"
+  >
+    <template
+      v-if="required === true"
+      #append
     >
-        <template v-if="required === true" v-slot:append>
-            <q-icon size="xs" name="r_star_border" color="red"/>
-        </template>
-    </component>
+      <q-icon
+        size="xs"
+        name="r_star_border"
+        color="red"
+      />
+    </template>
+  </component>
 </template>
 
 <script setup lang="ts">
-import {ref, watch} from "vue";
+import { ref, watch } from 'vue';
+import { ChangeCallback } from '@/components';
 
 interface FieldProps {
     label: string,
@@ -27,40 +35,42 @@ interface FieldProps {
     getObj?: () => any
     updateObj?: (info: any) => void
     updateObjConfig?: (fields: any) => void,
-    changeCallback:(obj:any)=>void
+    changeCallback?: ChangeCallback
 }
 
 const props = withDefaults(defineProps<FieldProps>(), {
-    modelValue: null,
-    required: false,
+  modelValue: null,
+  required: false,
+  componentsProps: undefined,
+  errorObj: undefined,
+  getObj: () => {},
+  updateObj: (info: any) => null,
+  updateObjConfig: (fields: any) => null,
+  changeCallback: (obj: any) => null,
+});
 
-    getObj: () => {},
-    updateObj: (info: any) => null,
-    updateObjConfig: (fields: any) => null,
-    changeCallback: (obj: any) => null,
-})
+const val = ref<any>(props.modelValue);
+const emit = defineEmits(['update:model-value']);
 
-const val = ref<any>(props.modelValue)
-const emit = defineEmits(['update:model-value'])
-
-watch(props, (value) => {
-    value !== val.value && (val.value = props.modelValue)
-}, {deep: true})
+watch(props, () => {
+  if (props.modelValue !== val.value)val.value = props.modelValue;
+}, { deep: true });
 
 watch(val, (value) => {
-    emit('update:model-value', value)
-    props.changeCallback({
-        getObj:props.getObj,
-        updateObj:props.updateObj,
-        updateObjConfig:props.updateObjConfig,
-    })
-})
-
+  emit('update:model-value', value);
+  if (typeof props.changeCallback === 'function') {
+    props.changeCallback(
+      props.getObj,
+      props.updateObj,
+      props.updateObjConfig,
+    );
+  }
+});
 
 </script>
 <script lang="ts">
 export default {
-    name: "XField",
+  name: 'XField',
 };
 </script>
 
