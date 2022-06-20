@@ -5,12 +5,12 @@ export enum DictionaryEnum {
 }
 
 export const getDictionaryById = (id:DictionaryEnum, value?:any):any => {
-  const dictionaryList = JSON.parse(sessionStorage.getItem(settingsEnum.DICTIONARY) || '[]');
-  let result = dictionaryList.filter((item:any) => item.sysDictionaryID == id);
-  if (!value) return result.map((item:any) => ({ label: item.label, value: item.value }));
+    const dictionaryList = JSON.parse(sessionStorage.getItem(settingsEnum.DICTIONARY) || '[]');
+    let result = dictionaryList.filter((item:any) => item.sysDictionaryID == id);
+    if (!value) return result.map((item:any) => ({ label: item.label, value: item.value }));
 
-  result = result.find((item:any) => item.value == value);
-  if (result) return result.label;
+    result = result.find((item:any) => item.value == value);
+    if (result) return result.label;
 
-  return null;
+    return null;
 };

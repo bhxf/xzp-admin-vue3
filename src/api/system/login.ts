@@ -56,9 +56,9 @@ export interface LoginResponse {
 }
 
 export function getCaptcha():Promise<CaptchaResponse> {
-  return xRequest.get({ url: '/base/captcha', headers: { ignoreAuth: true }, params: new Date().getTime() });
+    return xRequest.get({ url: '/base/captcha', headers: { ignoreAuth: true }, params: new Date().getTime() });
 }
 
 export function login(data:LoginRequest):Promise<LoginResponse> {
-  return xRequest.post({ url: '/base/login', headers: { ignoreAuth: true }, data });
+    return xRequest.post({ url: '/base/login', headers: { ignoreAuth: true }, data });
 }

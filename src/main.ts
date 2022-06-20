@@ -1,10 +1,11 @@
 import { createApp } from 'vue';
 
-import { setupClipboard } from '@/plugins/clipboard';
+import setupClipboard from '@/plugins/clipboard';
+import setupCodemirror from '@/plugins/codemirror';
 import App from './App.vue';
 
-import { setupQuasar } from './plugins/quasar';
-import { setupPinia } from './plugins/pinia';
+import setupQuasar from './plugins/quasar';
+import setupPinia from './plugins/pinia';
 import { setupRouter } from './plugins/router';
 
 const app = createApp(App);
@@ -14,5 +15,6 @@ setupPinia(app);
 setupQuasar(app);
 setupRouter(app);
 setupClipboard(app);
+setupCodemirror(app);
 
 app.mount('#app');

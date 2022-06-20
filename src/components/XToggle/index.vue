@@ -1,9 +1,9 @@
 <template>
-  <q-toggle
-    v-model="val"
-    :label="newLabel"
-    v-bind="$attrs"
-  />
+    <q-toggle
+        v-model="val"
+        :label="newLabel"
+        v-bind="$attrs"
+    />
 </template>
 
 <script setup lang="ts">
@@ -16,25 +16,25 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: null,
-  hideLabel: false,
+    modelValue: null,
+    hideLabel: false,
 });
 const emit = defineEmits(['update:modelValue']);
 const newLabel = ref(props.hideLabel ? '' : props.label);
 const val = ref<any>(props.modelValue);
 
 watch(props, () => {
-  val.value = props.modelValue;
+    val.value = props.modelValue;
 });
 
 watch(val, (value) => {
-  emit('update:modelValue', value);
+    emit('update:modelValue', value);
 });
 
 </script>
 <script lang="ts">
 export default {
-  name: 'XToggle',
+    name: 'XToggle',
 };
 </script>
 

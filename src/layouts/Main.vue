@@ -1,12 +1,12 @@
 <template>
-  <q-layout
-    view="hHh Lpr lff"
-    class="shadow-2 rounded-borders"
-  >
-    <layout-header />
-    <layout-navigation />
-    <layout-content />
-  </q-layout>
+    <q-layout
+        view="hHh Lpr lff"
+        class="shadow-2 rounded-borders"
+    >
+        <layout-header />
+        <layout-navigation />
+        <layout-content />
+    </q-layout>
 </template>
 
 <script setup lang="ts">
@@ -16,7 +16,7 @@ import LayoutContent from './content/index.vue';
 </script>
 <script lang="ts">
 export default {
-  name: 'LayoutMain',
+    name: 'LayoutMain',
 };
 </script>
 <style scoped lang="less">

@@ -1,278 +1,271 @@
 <template>
-  <div
-    :style="height"
-    class="flex column no-wrap q-pt-xs"
-  >
-    <div class="col-auto flex column q-pa-xs q-gutter-y-xs">
-      <div class="tools flex full-width items-center q-gutter-x-sm">
-        <x-btn-group :btn-list="btnList" />
-
-        <q-separator
-          v-if="btnList.length>0"
-          vertical
-          inset
-        />
-
-        <div class="flex row q-gutter-x-xs justify-start items-center">
-          <q-btn
-            color="primary"
-            round
-            dense
-            flat
-            icon="o_download"
-            @click="loadData"
-          >
-            <q-tooltip>导出</q-tooltip>
-          </q-btn>
-          <q-btn
-            color="primary"
-            round
-            dense
-            flat
-            icon="search"
-          >
-            <x-search-form
-              :search-list="searchList"
-              @onSearch="onSearch"
-            />
-            <q-tooltip>高级查询</q-tooltip>
-          </q-btn>
-          <q-btn
-            color="primary"
-            round
-            dense
-            flat
-            icon="tune"
-          >
-            <x-field-setting />
-            <q-tooltip>列设置</q-tooltip>
-          </q-btn>
-        </div>
-
-        <q-space />
-
-        <q-input
-          v-model="filter"
-          class="col-3"
-          rounded
-          standout
-          dense
-          placeholder="请输入关键字"
-        >
-          <template #append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        <q-btn
-          color="primary"
-          round
-          dense
-          flat
-          icon="refresh"
-          @click="loadData"
-        >
-          <q-tooltip>刷新</q-tooltip>
-        </q-btn>
-      </div>
-
-      <div class="full-width flex row q-gutter-x-xs" />
-    </div>
-    <q-table
-      ref="tableRef"
-      v-bind="$attrs"
-      v-model:pagination="pagination"
-
-      class="x-table col"
-      :hide-pagination="hidePagination"
-
-      :loading="loading"
-      :rows="dataSource"
-      :row-key="rowKey"
-      :selection="selection"
-      :rows-per-page-options="rowsPerPageOptions"
-      :columns="newColumns"
-      :visible-columns="visibleColumns"
-      @request="onRequest"
+    <div
+        :style="height"
+        class="flex column no-wrap q-pt-xs"
     >
-      <template #header="props">
-        <q-tr :props="props">
-          <q-th auto-width>
-            <q-checkbox
-              v-model="props.selected"
-              dense
-              size="sm"
-            />
-          </q-th>
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            class="text-weight-bold"
-          >
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-      </template>
-      <template #body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-checkbox
-              v-model="props.selected"
-              dense
-              size="sm"
-            />
-          </q-td>
-          <q-td
-            v-for="col in props.cols"
-            :key="col.name"
-            :auto-width="col.autoWidth === true"
-          >
-            <slot
-              :name="`td-${col.name}`"
-              v-bind="{col,props}"
-            >
-              <div
-                v-if="edit === 'cell' && col?.edit === true"
-                class="flex justify-end items-center q-gutter-x-sm"
-                :style="{textAlign:col.align||'left'}"
-              >
-                {{ props.row[col.name] }}
-                <q-icon name="edit" />
-                <q-popup-edit
-                  v-slot="scope"
-                  v-model="props.row[col.name]"
-                  :validate="(val)=>col?.componentsProps.validate(val,col)"
-                  buttons
-                  @hide="(val)=>col?.componentsProps.validate(val,col)"
-                >
-                  <x-field
-                    v-bind="col"
-                    v-model="scope.value"
-                  />
-                </q-popup-edit>
-              </div>
-              <div
-                v-else-if="edit === 'row' && col?.edit === true && props.row.edit === true"
-                class="flex justify-start items-center q-gutter-x-sm full-width"
-                :style="{textAlign:col.align||'left'}"
-              >
-                <x-field
-                  v-if="col?.componentsProps?.type === 'number'"
-                  v-bind="{...col,...props.row?.err?.[col.name],label:undefined}"
-                  v-model.number="props.row[col.name]"
-                  class="full-width"
+        <div class="col-auto flex column q-pa-xs q-gutter-y-xs">
+            <div class="tools flex full-width items-center q-gutter-x-sm">
+                <x-btn-group :btn-list="btnList" />
+
+                <q-separator
+                    v-if="btnList.length>0"
+                    vertical
+                    inset
                 />
-                <x-field
-                  v-else
-                  v-bind="{...col,...props.row?.err?.[col.name],label:undefined}"
-                  v-model="props.row[col.name]"
-                  class="full-width"
+
+                <div class="flex row q-gutter-x-xs justify-start items-center">
+                    <q-btn
+                        color="primary"
+                        round
+                        dense
+                        flat
+                        icon="o_download"
+                        @click="loadData"
+                    >
+                        <q-tooltip>导出</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                        color="primary"
+                        round
+                        dense
+                        flat
+                        icon="search"
+                    >
+                        <x-search-form
+                            :search-list="searchList"
+                            @onSearch="onSearch"
+                        />
+                        <q-tooltip>高级查询</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                        color="primary"
+                        round
+                        dense
+                        flat
+                        icon="tune"
+                    >
+                        <x-field-setting />
+                        <q-tooltip>列设置</q-tooltip>
+                    </q-btn>
+                </div>
+
+                <q-space />
+
+                <q-input
+                    v-model="filter"
+                    class="col-3"
+                    standout
+                    dense
+                    placeholder="请输入关键字"
+                >
+                    <template #append>
+                        <q-icon name="search" />
+                    </template>
+                </q-input>
+                <q-btn
+                    color="primary"
+                    round
+                    dense
+                    flat
+                    icon="refresh"
+                    @click="loadData"
+                >
+                    <q-tooltip>刷新</q-tooltip>
+                </q-btn>
+            </div>
+
+            <div class="full-width flex row q-gutter-x-xs" />
+        </div>
+        <q-table
+            flat
+            ref="tableRef"
+            v-bind="$attrs"
+            v-model:pagination="pagination"
+
+            class="x-table col"
+            :hide-pagination="hidePagination"
+
+            :loading="loading"
+            :rows="dataSource"
+            :row-key="rowKey"
+            :selection="selection"
+            :rows-per-page-options="rowsPerPageOptions"
+            :columns="newColumns"
+            :visible-columns="visibleColumns"
+            @request="onRequest"
+        >
+            <template #header="props">
+                <q-tr :props="props">
+                    <q-th auto-width>
+                        <q-checkbox
+                            v-model="props.selected"
+                            dense
+                            size="sm"
+                        />
+                    </q-th>
+                    <q-th
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                        :style="getThStyle(col)"
+                        class="text-weight-bold"
+                    >
+                        {{ col.label }}
+                    </q-th>
+                </q-tr>
+            </template>
+            <template #body="props">
+                <q-tr :props="props">
+                    <q-td auto-width>
+                        <q-checkbox
+                            v-model="props.selected"
+                            dense
+                            size="sm"
+                        />
+                    </q-td>
+                    <q-td
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :auto-width="edit === 'row' && col.name === 'editAction'"
+                    >
+                        <slot
+                            :name="`td-${col.name}`"
+                            v-bind="{col,props}"
+                        >
+                            <div
+                                v-if="edit === 'row' && col.name === 'editAction'"
+                                class="flex no-wrap items-center justify-center q-gutter-x-sm"
+                            >
+                                <q-btn
+                                    v-if="props.row.edit !== true"
+                                    flat
+                                    round
+                                    dense
+                                    color="orange"
+                                    icon="o_edit"
+                                    @click="onEdit(props)"
+                                >
+                                    <q-tooltip>编辑当前行</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    v-if="props.row.edit !== true"
+                                    flat
+                                    round
+                                    dense
+                                    color="primary"
+                                    icon="content_copy"
+                                    @click="onCopy(props)"
+                                >
+                                    <q-tooltip>在下方复制一行</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    v-if="props.row.edit !== true"
+                                    flat
+                                    round
+                                    dense
+                                    color="primary"
+                                    icon="add"
+                                    @click="onAdd(props)"
+                                >
+                                    <q-tooltip>在下方新增一行</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    v-if="props.row.edit !== true"
+                                    :loading="props.row.loading"
+                                    flat
+                                    round
+                                    dense
+                                    color="red"
+                                    icon="remove"
+                                    @click="onDel(props)"
+                                >
+                                    <q-tooltip>删除当前行</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    v-if="props.row.edit === true"
+                                    :loading="props.row.loading"
+                                    flat
+                                    round
+                                    dense
+                                    color="primary"
+                                    icon="o_done"
+                                    @click="onDone(props)"
+                                >
+                                    <q-tooltip>保存</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    v-if="props.row.edit === true"
+                                    flat
+                                    round
+                                    dense
+                                    color="red"
+                                    icon="o_close"
+                                    @click="onCancel(props)"
+                                >
+                                    <q-tooltip>取消，数据将会被还原</q-tooltip>
+                                </q-btn>
+                            </div>
+                            <div
+                                v-else
+                                :style="getTdStyle(col)"
+                            >
+                                <template v-if="edit === 'cell' && col?.edit === true">
+                                    <q-icon name="edit" />
+                                    <q-popup-edit
+                                        v-slot="scope"
+                                        v-model="props.row[col.name]"
+                                        :validate="(val)=>col?.componentsProps.validate(val,col)"
+                                        buttons
+                                        @hide="(val)=>col?.componentsProps.validate(val,col)"
+                                    >
+                                        <x-field
+                                            v-bind="col"
+                                            v-model="scope.value"
+                                        />
+                                    </q-popup-edit>
+                                </template>
+                                <template
+                                    v-else-if="edit === 'row' && col?.edit === true && props.row.edit === true"
+                                >
+                                    <x-field
+                                        v-if="col?.componentsProps?.type === 'number'"
+                                        v-bind="{...col,...props.row?.err?.[col.name],label:undefined}"
+                                        v-model.number="props.row[col.name]"
+                                        class="full-width"
+                                    />
+                                    <x-field
+                                        v-else
+                                        v-bind="{...col,...props.row?.err?.[col.name],label:undefined}"
+                                        v-model="props.row[col.name]"
+                                        class="full-width"
+                                    />
+                                </template>
+                                <template v-else-if="isVue(col, props.row)">
+                                    <component :is="formatLabel(col, props.row)" />
+                                </template>
+                                <template v-else>
+                                    {{ formatLabel(col, props.row) }}
+                                </template>
+                            </div>
+                        </slot>
+                    </q-td>
+                </q-tr>
+            </template>
+            <template #loading>
+                <q-inner-loading
+                    showing
+                    color="primary"
                 />
-              </div>
-              <div
-                v-else-if="edit === 'row' && col.name === 'editAction'"
-                :style="{textAlign:col.align||'left'}"
-              >
-                <q-btn
-                  v-if="props.row.edit !== true"
-                  flat
-                  round
-                  dense
-                  color="orange"
-                  icon="o_edit"
-                  @click="onEdit(props)"
-                >
-                  <q-tooltip>编辑当前行</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="props.row.edit !== true"
-                  flat
-                  round
-                  dense
-                  color="primary"
-                  icon="content_copy"
-                  @click="onCopy(props)"
-                >
-                  <q-tooltip>在下方复制一行</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="props.row.edit !== true"
-                  flat
-                  round
-                  dense
-                  color="primary"
-                  icon="add"
-                  @click="onAdd(props)"
-                >
-                  <q-tooltip>在下方新增一行</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="props.row.edit !== true"
-                  :loading="props.row.loading"
-                  flat
-                  round
-                  dense
-                  color="red"
-                  icon="remove"
-                  @click="onDel(props)"
-                >
-                  <q-tooltip>删除当前行</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="props.row.edit === true"
-                  :loading="props.row.loading"
-                  flat
-                  round
-                  dense
-                  color="primary"
-                  icon="o_done"
-                  @click="onDone(props)"
-                >
-                  <q-tooltip>保存</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="props.row.edit === true"
-                  flat
-                  round
-                  dense
-                  color="red"
-                  icon="o_close"
-                  @click="onCancel(props)"
-                >
-                  <q-tooltip>取消，数据将会被还原</q-tooltip>
-                </q-btn>
-              </div>
-              <div
-                v-else-if="isVue(col, props.row)"
-                :style="{textAlign:col.align||'left'}"
-              >
-                <component :is="formatLabel(col, props.row)" />
-              </div>
-              <div
-                v-else
-                :style="{textAlign:col.align||'left'}"
-              >
-                {{ formatLabel(col, props.row) }}
-              </div>
-            </slot>
-          </q-td>
-        </q-tr>
-      </template>
-      <template #loading>
-        <q-inner-loading
-          showing
-          color="primary"
-        />
-      </template>
-    </q-table>
-  </div>
+            </template>
+        </q-table>
+    </div>
 </template>
 
 <script setup lang="ts">
 
 import {
-  XBtnGroup,
-  Column, ResultColumn, SearchColumn, XSearchForm, BtnGroup, getComponentsByName,
+    XBtnGroup,
+    Column, ResultColumn, SearchColumn, XSearchForm, BtnGroup, getComponentsByName, BaseFunctionReturn,
 } from '@/components';
 import { computed, provide, ref } from 'vue';
 import XFieldSetting from '@/components/XTable/XFieldSetting.vue';
@@ -284,6 +277,7 @@ import { clone } from 'lodash-es';
 
 interface XTableProps {
     api?: (search: any) => any,
+    afterFormat?: BaseFunctionReturn,
     search?: any,
     addRowBoj?: any,
     resultKey?: string,
@@ -304,29 +298,30 @@ interface XTableProps {
     pageSize?: number,
 }
 const props = withDefaults(defineProps<XTableProps>(), {
-  api: undefined,
-  height: undefined,
-  btnList: () => [],
-  columns: () => [],
-  searchList: () => [],
-  dataSource: () => [],
-  rowsPerPageOptions: () => [25, 50, 100, 300, 500, 1000],
-  edit: '',
-  action: null,
-  search: null,
-  addRowBoj: null,
-  resultKey: 'list',
-  rowKey: 'ID',
-  selection: 'multiple',
-  loadFirst: true,
-  hidePagination: false,
-  hideSerialNumber: false,
-  pageSize: 25,
-  resultPage: {
-    page: 'page',
-    rowsPerPage: 'pageSize',
-    rowsNumber: 'total',
-  },
+    api: undefined,
+    afterFormat: undefined,
+    height: undefined,
+    btnList: () => [],
+    columns: () => [],
+    searchList: () => [],
+    dataSource: () => [],
+    rowsPerPageOptions: () => [25, 50, 100, 300, 500, 1000],
+    edit: '',
+    action: null,
+    search: null,
+    addRowBoj: null,
+    resultKey: 'list',
+    rowKey: 'ID',
+    selection: 'multiple',
+    loadFirst: true,
+    hidePagination: false,
+    hideSerialNumber: false,
+    pageSize: 25,
+    resultPage: {
+        page: 'page',
+        rowsPerPage: 'pageSize',
+        rowsNumber: 'total',
+    },
 });
 const emit = defineEmits(['updateDone', 'updateDel']);
 
@@ -336,179 +331,204 @@ const filter = ref('');
 const query = ref(props.search || {});
 const loading = ref(false);
 const pagination = ref<any>({
-  page: 1,
-  rowsPerPage: 50,
+    page: 1,
+    rowsPerPage: 50,
 });
 const editData = ref<any>({});
 const dataSource = ref<any[]>([]);
 const newColumns = ref<Column[]>(clone(props.columns));
 
+const getThStyle = computed(() => (col:Column):string => {
+    let defaultStyle = 'textAlign:left;';
+    if (col.align) defaultStyle = `textAlign:${col.align};`;
+    if (col.width) defaultStyle += `minWidth:${col.width}px;`;
+    return defaultStyle;
+});
+const getTdStyle = computed(() => (col:Column):any => {
+    const style:any = { textAlign: col.align };
+    if (col.width) style.minWidth = col.width;
+
+    return style;
+});
 const visibleColumns = computed(() => {
-  const list = newColumns.value.filter((item:Column) => item.show === true);
-  return list.map((item) => item.name);
+    const list = newColumns.value.filter((item:Column) => item.show === true);
+    return list.map((item) => item.name);
 });
 
 const isVue = (col: any, row: any) => {
-  if (typeof col.format === 'function') {
-    const comp = col.format(row[col.name], row);
-    return typeof comp === 'object';
-  }
-  return false;
+    if (typeof col.format === 'function') {
+        const comp = col.format(row[col.name], row);
+        return typeof comp === 'object';
+    }
+    return false;
 };
 const formatLabel = (col: any, row: any) => {
-  if (typeof col.format === 'function') return col.format(row[col.name], row);
-  return row[col.name];
+    if (typeof col.format === 'function') return col.format(row[col.name], row);
+    return row[col.name];
 };
 
 const validate = (row: any, cols: any) => {
-  cols.forEach((col: any) => {
-    if (typeof col.componentsProps?.validate === 'function') {
-      if (!row.err) row.err = {};
-      row.err[col.name] = {};
-      const err:any = row.err[col.name];
-      const result = col.componentsProps.validate(row[col.name], err);
-      if (err?.errorMessage) notify.error(err?.errorMessage);
-      if (!result) throw new Error(err?.errorMessage);
-    }
-  });
+    cols.forEach((col: any) => {
+        if (typeof col.componentsProps?.validate === 'function') {
+            if (!row.err) row.err = {};
+            row.err[col.name] = {};
+            const err:any = row.err[col.name];
+            const result = col.componentsProps.validate(row[col.name], err);
+            if (err?.errorMessage) notify.error(err?.errorMessage);
+            if (!result) throw new Error(err?.errorMessage);
+        }
+    });
 };
 const loadData = async (params: any = {}) => {
-  if (typeof props.api === 'function') {
-    loading.value = true;
-    query.value = Object.assign(query.value, params);
+    let list = [];
+    if (typeof props.api === 'function') {
+        loading.value = true;
+        query.value = Object.assign(query.value, params);
 
-    const result = await props.api(query.value);
+        const result = await props.api(query.value);
 
-    if (!props.hidePagination) {
-      pagination.value.page = result[props.resultPage.page];
-      pagination.value.rowsPerPage = result[props.resultPage.rowsPerPage];
-      pagination.value.rowsNumber = result[props.resultPage.rowsNumber];
-    }
-
-    if (!props.hideSerialNumber) {
-      dataSource.value = result[props.resultKey].filter((item: any, index: number) => {
-        if (props.hidePagination) {
-          item.serialNumber = (index + 1);
-        } else {
-          item.serialNumber = ((query.value.page - 1) * query.value.pageSize) + (index + 1);
+        if (!props.hidePagination) {
+            pagination.value.page = result[props.resultPage.page];
+            pagination.value.rowsPerPage = result[props.resultPage.rowsPerPage];
+            pagination.value.rowsNumber = result[props.resultPage.rowsNumber];
         }
-        return item;
-      });
+
+        if (!props.hideSerialNumber) {
+            list = result[props.resultKey].filter((item: any, index: number) => {
+                if (props.hidePagination) {
+                    item.serialNumber = (index + 1);
+                } else {
+                    item.serialNumber = ((query.value.page - 1) * query.value.pageSize)
+                        + (index + 1);
+                }
+                return item;
+            });
+        } else {
+            list = result[props.resultKey];
+        }
+
+        loading.value = false;
     } else {
-      dataSource.value = result[props.resultKey];
+        list = props.dataSource;
     }
 
-    loading.value = false;
-  } else {
-    dataSource.value = props.dataSource;
-  }
+    dataSource.value = afterFormat(list);
 };
+
+const afterFormat = (list:any[]) => {
+    let newList:any[] = list;
+    if (typeof props.afterFormat === 'function') {
+        newList = props.afterFormat(list);
+    }
+    return newList;
+};
+
 const addFirst = (row:any = {}) => {
-  const newRow:any = Object.assign(row, props.addRowBoj);
-  newRow.edit = true;
-  newRow.editType = 'add';
-  newRow[props.rowKey] = v4();
-  dataSource.value.unshift(Object.assign(newRow, row));
+    const newRow:any = Object.assign(row, props.addRowBoj);
+    newRow.edit = true;
+    newRow.editType = 'add';
+    newRow[props.rowKey] = v4();
+    dataSource.value.unshift(Object.assign(newRow, row));
 };
 
 const onDel = ({ row }: any) => {
-  dialog.confirm('操作提示', '你确定要删除吗？', async () => {
-    emit('updateDel', row);
-  }, () => {
-  });
+    dialog.confirm('操作提示', '你确定要删除吗？', async () => {
+        emit('updateDel', row);
+    }, () => {
+    });
 };
 const onAdd = ({ row }: any) => {
-  const key = row[props.rowKey];
-  const index = dataSource.value.findIndex((item) => item[props.rowKey] === key);
-  const newRow:any = { ...props.addRowBoj };
-  newRow.edit = true;
-  newRow.editType = 'add';
-  newRow[props.rowKey] = v4();
-  dataSource.value.splice(index + 1, 0, newRow);
+    const key = row[props.rowKey];
+    const index = dataSource.value.findIndex((item) => item[props.rowKey] === key);
+    const newRow:any = { ...props.addRowBoj };
+    newRow.edit = true;
+    newRow.editType = 'add';
+    newRow[props.rowKey] = v4();
+    dataSource.value.splice(index + 1, 0, newRow);
 };
 const onCopy = ({ row }: any) => {
-  const key = row[props.rowKey];
-  const index = dataSource.value.findIndex((item) => item[props.rowKey] === key);
+    const key = row[props.rowKey];
+    const index = dataSource.value.findIndex((item) => item[props.rowKey] === key);
 
-  const newRow = Object.assign(clone(row), props.addRowBoj);
-  newRow.edit = true;
-  newRow.editType = 'add';
-  newRow[props.rowKey] = v4();
-  dataSource.value.splice(index + 1, 0, newRow);
+    const newRow = Object.assign(clone(row), props.addRowBoj);
+    newRow.edit = true;
+    newRow.editType = 'add';
+    newRow[props.rowKey] = v4();
+    dataSource.value.splice(index + 1, 0, newRow);
 };
 const onEdit = ({ row }: any) => {
-  const key = row[props.rowKey];
-  row.edit = true;
-  row.editType = 'edit';
-  editData.value[key] = JSON.parse(JSON.stringify(row));
+    const key = row[props.rowKey];
+    row.edit = true;
+    row.editType = 'edit';
+    editData.value[key] = JSON.parse(JSON.stringify(row));
 };
 const onDone = ({ row, cols }: any) => {
-  validate(row, cols);
-  emit('updateDone', row);
+    validate(row, cols);
+    emit('updateDone', row);
 };
 const onCancel = ({ row }: any) => {
-  const key = row[props.rowKey];
-  const editRow = editData.value[key];
-  if (!editRow) {
-    const index = dataSource.value.findIndex((item) => item[props.rowKey] === key);
-    dataSource.value.splice(index, 1);
-  } else {
-    // eslint-disable-next-line no-param-reassign
-    row = Object.assign(row, editData.value[key]);
-    row.edit = false;
-  }
+    const key = row[props.rowKey];
+    const editRow = editData.value[key];
+    if (!editRow) {
+        const index = dataSource.value.findIndex((item) => item[props.rowKey] === key);
+        dataSource.value.splice(index, 1);
+    } else {
+        // eslint-disable-next-line no-param-reassign
+        row = Object.assign(row, editData.value[key]);
+        row.edit = false;
+    }
 };
 const onSearch = (list: ResultColumn[]) => {
-  console.log(list);
+    console.log(list);
 };
 const onRequest = async (props: any) => {
-  const {
-    page, rowsPerPage, sortBy, descending,
-  } = props.pagination;
-  await loadData({ page, pageSize: rowsPerPage, ...props.filter });
+    const {
+        page, rowsPerPage, sortBy, descending,
+    } = props.pagination;
+    await loadData({ page, pageSize: rowsPerPage, ...props.filter });
 };
 
 const init = () => {
-  if (props.edit === 'row') {
-    newColumns.value.push({
-      align: 'center',
-      name: 'editAction',
-      label: '操作',
-      field: 'editAction',
-      autoWidth: true,
+    if (props.edit === 'row') {
+        newColumns.value.push({
+            align: 'center',
+            name: 'editAction',
+            label: '操作',
+            field: 'editAction',
+            autoWidth: true,
+        });
+    }
+    if (!props.hideSerialNumber) {
+        newColumns.value.unshift({
+            align: 'center',
+            name: 'serialNumber',
+            label: '#',
+            field: 'serialNumber',
+            autoWidth: true,
+        });
+    }
+
+    newColumns.value.forEach((item: any) => {
+        const defaultComponentsProps = {
+            dense: true,
+            outlined: false,
+            clearable: true,
+            standout: '',
+            hint: '',
+        };
+        if (!item.align) item.align = 'left';
+        if (!item.field) item.field = item.name;
+        item.show = item.show !== false;
+        if (typeof item.components === 'string') item.components = getComponentsByName(item.components || 'input');
+        item.componentsProps = Object.assign(defaultComponentsProps, item.componentsProps);
     });
-  }
-  if (!props.hideSerialNumber) {
-    newColumns.value.unshift({
-      align: 'center',
-      name: 'serialNumber',
-      label: '#',
-      field: 'serialNumber',
-      autoWidth: true,
-    });
-  }
 
-  newColumns.value.forEach((item: any) => {
-    const defaultComponentsProps = {
-      dense: true,
-      outlined: false,
-      rounded: true,
-      clearable: true,
-      standout: '',
-      hint: '',
-    };
-    if (!item.field) item.field = item.name;
-    item.show = item.show !== false;
-    if (typeof item.components === 'string') item.components = getComponentsByName(item.components || 'input');
-    item.componentsProps = Object.assign(defaultComponentsProps, item.componentsProps);
-  });
+    if (!props.hidePagination) {
+        query.value.page = 1;
+        query.value.pageSize = props.pageSize;
+    }
 
-  if (!props.hidePagination) {
-    query.value.page = 1;
-    query.value.pageSize = props.pageSize;
-  }
-
-  if (props.loadFirst) loadData();
+    if (props.loadFirst) loadData();
 };
 init();
 
@@ -519,15 +539,11 @@ defineExpose({ loadData, addFirst });
 
 <script lang="ts">
 export default {
-  name: 'XTable',
+    name: 'XTable',
 };
 </script>
 
 <style scoped lang="sass">
-.my-input
-    height: 30px
-    align-items: center
-
 .x-table
     width: 100%
 
@@ -569,7 +585,7 @@ export default {
     td:last-child, th:last-child
         position: sticky
         right: 0
-        //box-shadow: -6px 0 6px 0 rgb(0 0 0 / 5%)
+        box-shadow: -6px 0 6px 0 rgb(0 0 0 / 5%)
         background: white
 
 .body--light

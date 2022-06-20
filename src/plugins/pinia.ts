@@ -1,5 +1,5 @@
 import { createPinia } from 'pinia';
 
-export function setupPinia(app:any) {
-  app.use(createPinia());
+export default function setupPinia(app:any) {
+    app.use(createPinia());
 }

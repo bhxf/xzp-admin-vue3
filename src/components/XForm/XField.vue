@@ -1,23 +1,23 @@
 <template>
-  <component
-    v-bind="{...componentsProps,...errorObj}"
-    :is="components"
+    <component
+        v-bind="{...componentsProps,...errorObj}"
+        :is="components"
 
-    v-model="val"
-    :label="label"
-    :required="required"
-  >
-    <template
-      v-if="required === true"
-      #append
+        v-model="val"
+        :label="label"
+        :required="required"
     >
-      <q-icon
-        size="xs"
-        name="r_star_border"
-        color="red"
-      />
-    </template>
-  </component>
+        <template
+            v-if="required === true"
+            #append
+        >
+            <q-icon
+                size="xs"
+                name="r_star_border"
+                color="red"
+            />
+        </template>
+    </component>
 </template>
 
 <script setup lang="ts">
@@ -39,38 +39,38 @@ interface FieldProps {
 }
 
 const props = withDefaults(defineProps<FieldProps>(), {
-  modelValue: null,
-  required: false,
-  componentsProps: undefined,
-  errorObj: undefined,
-  getObj: () => {},
-  updateObj: (info: any) => null,
-  updateObjConfig: (fields: any) => null,
-  changeCallback: (obj: any) => null,
+    modelValue: null,
+    required: false,
+    componentsProps: undefined,
+    errorObj: undefined,
+    getObj: () => {},
+    updateObj: (info: any) => null,
+    updateObjConfig: (fields: any) => null,
+    changeCallback: (obj: any) => null,
 });
 
 const val = ref<any>(props.modelValue);
 const emit = defineEmits(['update:model-value']);
 
 watch(props, () => {
-  if (props.modelValue !== val.value)val.value = props.modelValue;
+    if (props.modelValue !== val.value) val.value = props.modelValue;
 }, { deep: true });
 
 watch(val, (value) => {
-  emit('update:model-value', value);
-  if (typeof props.changeCallback === 'function') {
-    props.changeCallback(
-      props.getObj,
-      props.updateObj,
-      props.updateObjConfig,
-    );
-  }
+    emit('update:model-value', value);
+    if (typeof props.changeCallback === 'function') {
+        props.changeCallback(
+            props.getObj,
+            props.updateObj,
+            props.updateObjConfig,
+        );
+    }
 });
 
 </script>
 <script lang="ts">
 export default {
-  name: 'XField',
+    name: 'XField',
 };
 </script>
 

@@ -4,17 +4,18 @@
         unit="px"
     >
         <template #before>
-            <!--树组件-->
             <div
                 class="flex column"
                 :style="getHeight"
             >
                 <x-tree
                     ref="treeRef"
-                    :api="getAuthorityList"
+
+                    :api="getCodeTemplateTree"
+
                     result-key="list"
-                    node-key="authorityId"
-                    label-key="authorityName"
+                    node-key="ID"
+                    label-key="name"
 
                     @update:selected="updateSelected"
                     @update:ticked="updateTicked"
@@ -29,6 +30,15 @@
                             @click="onAdd"
                         />
                         <q-btn
+                            :disable="isEdit"
+                            flat
+                            dense
+                            round
+                            icon="o_edit"
+                            color="orange"
+                            @click="onEdit"
+                        />
+                        <q-btn
                             :disable="isDel"
                             flat
                             dense
@@ -38,34 +48,24 @@
                             @click="onDel"
                         />
                     </template>
-                    <template #default-header="prop">
-                        <div class="flex column justify-start">
-                            <div class="text-weight-bold text-caption">
-                                {{ prop.node.authorityName }}
-                            </div>
-                            <div class="text-caption">
-                                {{ prop.node.authorityId }}
-                            </div>
-                        </div>
-                    </template>
                 </x-tree>
             </div>
-
-            <!--新增-->
+            <!--新增菜单-->
             <x-dialog v-model="loadings['add']">
                 <template #title>
                     <div class="text-h6">
-                        {{ getTitle }}角色
+                        {{ getTitle }}
                     </div>
                 </template>
                 <x-form
                     ref="formRef"
-                    :fields="initRoleForm"
+                    :fields="initMenuForm"
                 />
                 <template #actions>
                     <q-btn
                         :loading="loadings['save']"
                         color="primary"
+                        unelevated
                         label="保存"
                         @click="onSave"
                     />
@@ -73,14 +73,18 @@
                         v-close-popup
                         flat
                         label="取消"
-                        color="primary"
                     />
                 </template>
             </x-dialog>
         </template>
 
         <template #after>
-            <RoleDetail ref="detailRef" />
+            <div :style="getHeight">
+                <XMonaco
+                    v-model="code"
+                    :model="getModel"
+                />
+            </div>
         </template>
     </q-splitter>
 </template>
@@ -89,28 +93,38 @@
 import { computed, ref } from 'vue';
 import XTree from '@/components/XTree/index.vue';
 import XForm from '@/components/XForm/index.vue';
-import XDialog from '@/components/XDialog/index.vue';
 
-import { roleForm } from '@/views/admin/role/data';
 import { dialog, notify } from '@/hooks/message';
-import {
-    createAuthority, deleteAuthority, getAuthorityList, updateAuthority,
-} from '@/api/system/role';
+import XDialog from '@/components/XDialog/index.vue';
+import useLayoutStore from '@/store/settings/layout';
 import {
     actionCondition, actionConst, actionLoading, actionRef, actionTitle,
 } from '@/tools/action/curd';
-import RoleDetail from '@/views/admin/role/detail.vue';
-import useLayoutStore from '@/store/settings/layout';
+import {
+    createCodeTemplate,
+    deleteCodeTemplate,
+    getCodeTemplateTree,
+    updateCodeTemplate,
+} from '@/api/codeGeneration/template';
+import XMonaco from '@/components/XMonaco/index.vue';
+import { useQuasar } from 'quasar';
+
+const code = ref('');
+const name = ref('');
 
 const { action, getTitle } = actionTitle('角色');
-const { formRef, treeRef, detailRef } = actionRef();
+const { formRef, treeRef } = actionRef();
 const { loadings } = actionLoading('add', 'save');
-const { treeSelected, treeTicked } = actionConst();
-const { isDel } = actionCondition(treeSelected, treeTicked);
+const {
+    treeSelected, treeTicked,
+} = actionConst();
+const { isEdit, isDel } = actionCondition(treeSelected, treeTicked);
 
-const updateSelected = async (value: any) => {
+const updateSelected = (value: any) => {
     treeSelected.value = value;
-    detailRef.value?.loadData(treeSelected.value);
+    const node = treeRef?.value?.treeRef.getNodeByKey(value);
+    code.value = node?.context || '';
+    name.value = node?.name || '';
 };
 const updateTicked = (value: any[]) => {
     treeTicked.value = value;
@@ -125,11 +139,12 @@ const onSave = async () => {
             if (!info.parentId) {
                 info.parentId = 0;
             }
-            info.parentId = info.parentId.toString();
-            if (action.value === 'add') await createAuthority(info);
-            else await updateAuthority(info);
 
-            notify.success(`${getTitle.value}成功`);
+            info.parentId = info.parentId.toString();
+            if (action.value === 'add') await createCodeTemplate(info);
+            else await updateCodeTemplate(info);
+
+            notify.success(`${getTitle.value}菜单成功`);
 
             loadings.value.add = false;
             treeRef.value?.loadData();
@@ -142,31 +157,39 @@ const onAdd = () => {
     action.value = 'add';
     loadings.value.add = true;
 };
+const onEdit = async () => {
+    // action.value = 'edit';
+    // const { menu } = await getBaseMenuById({ id: treeSelected.value || treeTicked.value[0].ID });
+    // loadings.value.add = true;
+    // await nextTick();
+    // const detail: any = menu;
+    // detail.icon = menu.meta?.icon;
+    // detail.title = menu.meta?.title;
+    // detail.keepAlive = menu.meta?.keepAlive;
+    // detail.closeTab = menu.meta?.closeTab;
+    // formRef.value?.updateObj(detail);
+};
 const onDel = async () => {
     dialog.confirm('操作提示', '你确定要删除吗？', async () => {
-        await deleteAuthority({ authorityId: treeSelected.value });
+        await deleteCodeTemplate({ id: treeSelected.value });
         notify.success('删除成功');
         treeRef.value?.loadData();
     }, () => {
     });
 };
 
-const initRoleForm = computed(() => {
-    roleForm.forEach((item) => {
-        if (item.name === 'parentId') {
-            item.defaultValue = treeSelected.value;
-        }
-    });
-
-    return roleForm;
-});
-const splitterModel = ref(250);
+const splitterModel = ref(300);
 const getHeight = computed(() => ({ height: useLayoutStore().getPageHeight }));
+const getModel = computed(() => {
+    const modelType = name.value.split('.');
+    console.log(modelType);
+    return modelType[modelType.length - 1];
+});
 
 </script>
 <script lang="ts">
 export default {
-    name: 'Role',
+    name: 'CodeTemplate',
 };
 </script>
 

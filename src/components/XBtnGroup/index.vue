@@ -1,18 +1,18 @@
 <template>
-  <div>
-    <q-btn
-      v-for="(btn,index) in newBtnList"
-      v-bind="btn"
-      :key="index"
-      flat
-      dense
-      round
-      color="primary"
-      :disable="isDisable(btn?.isDisable)"
-    >
-      <q-tooltip>{{ btn.tooltip }}</q-tooltip>
-    </q-btn>
-  </div>
+    <div>
+        <q-btn
+            v-for="(btn,index) in newBtnList"
+            v-bind="btn"
+            :key="index"
+            flat
+            dense
+            round
+            color="primary"
+            :disable="isDisable(btn?.isDisable)"
+        >
+            <q-tooltip>{{ btn.tooltip }}</q-tooltip>
+        </q-btn>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -25,19 +25,19 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  btnList: () => [],
+    btnList: () => [],
 });
 
 const newBtnList = ref<BtnGroup[]>(props.btnList);
 const isDisable = (disable: any) => {
-  if (disable && typeof disable === 'function') return disable();
-  return false;
+    if (disable && typeof disable === 'function') return disable();
+    return false;
 };
 
 </script>
 <script lang="ts">
 export default {
-  name: 'XBtnGroup',
+    name: 'XBtnGroup',
 };
 </script>
 

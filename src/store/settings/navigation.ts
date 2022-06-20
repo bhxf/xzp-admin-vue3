@@ -3,8 +3,6 @@ import { getBaseMenuTree } from '@/api/system/menu';
 import { useRouter } from '@/plugins/router';
 import { RouteRecordRaw } from 'vue-router';
 import { settingsEnum } from '@/tools/http';
-import { loading } from '@/hooks/message';
-import NavTabs from '@/layouts/navigation/NavTabs.vue';
 
 export interface Meta {
     keepAlive?: boolean;
@@ -12,10 +10,11 @@ export interface Meta {
     title: string;
     icon: string;
     closeTab?: boolean;
+    collect?: boolean;
 }
 
 export interface NavTab {
-    ID: string,
+    ID?: string,
     parentId?: string,
     name?: string,
     icon?: string,
@@ -32,170 +31,200 @@ interface NavStore {
     isLoadMenu: boolean,
     openMenu: boolean,
     reload: boolean,
-    currentNavTab: NavTab,
+    currentNavTab: NavTab|null,
     currentNavTabs: NavTab[],
     collectNavTabs: NavTab[],
     collectActive: string,
     allNavTabs: NavTab[],
 }
-
-const defaultNavTab: NavTab = {
-  ID: '1',
-  name: 'dashboard',
-  path: 'dashboard',
-  meta: { title: '首页', icon: 'o_other_houses' },
-  close: false,
-};
 const modules = import.meta.glob('@/views/**/*.vue');
 
 const recursionMenu = (router: RouteRecordRaw, menus: NavTab[]) => {
-  menus.forEach((item) => {
-    const component = modules[`../../views/${item.component}.vue`] || (() => import('@/layouts/error/404.vue'));
-    const menu: RouteRecordRaw = {
-      name: item.name,
-      path: item.path || '',
-      meta: item.meta as any,
-      component,
-    };
-    router.children?.push(menu);
-    if (item.children && item.children.length > 0) recursionMenu(router, item.children);
-  });
+    menus.forEach((item) => {
+        const component = modules[`../../views/${item.component}.vue`] || (() => import('@/layouts/error/404.vue'));
+        const menu: RouteRecordRaw = {
+            name: item.name,
+            path: item.path || '',
+            meta: item.meta as any,
+            component,
+        };
+        router.children?.push(menu);
+        if (item.children && item.children.length > 0) recursionMenu(router, item.children);
+    });
 };
 const treeToList = (addList:NavTab[], list: NavTab[]) => {
-  list.forEach((item) => {
-    addList.push(item);
-    item.children && item.children.length > 0 && treeToList(addList, item.children);
-  });
+    list.forEach((item) => {
+        addList.push(item);
+        if (item.children && item.children.length > 0) treeToList(addList, item.children);
+    });
 };
 
 export const useNavTabStore = defineStore('navTabStore', {
-  state: (): NavStore => ({
-    reload: false,
-    openMenu: false,
-    isLoadMenu: false,
-    currentNavTab: JSON.parse(sessionStorage.getItem(settingsEnum.TAB) || '{}'),
-    currentNavTabs: JSON.parse(sessionStorage.getItem(settingsEnum.TABS) || '[]'),
-    collectNavTabs: JSON.parse(sessionStorage.getItem(settingsEnum.COLLECT_TAB) || '[]'),
-    allNavTabs: [],
-    collectActive: sessionStorage.getItem(settingsEnum.COLLECT_ACTIVE_TAB) || '',
-  }),
-  getters: {
-    getCurrentNavTabIndex(): number {
-      return this.currentNavTabs.findIndex((item) => item.ID === this.currentNavTab?.ID);
+    state: (): NavStore => ({
+        reload: false,
+        openMenu: false,
+        isLoadMenu: false,
+        currentNavTab: null,
+        currentNavTabs: JSON.parse(sessionStorage.getItem(settingsEnum.TABS) || '[]'),
+        collectNavTabs: [],
+        allNavTabs: [],
+        collectActive: sessionStorage.getItem(settingsEnum.COLLECT_ACTIVE_TAB) || '',
+    }),
+    getters: {
+        getCurrentNavTabIndex(): number {
+            return this.currentNavTabs.findIndex((item) => item.path === this.currentNavTab?.path);
+        },
+        getAllNavTabList():NavTab[] {
+            const list:NavTab[] = [];
+            treeToList(list, this.allNavTabs);
+            return list;
+        },
     },
-    getAllNavTabList():NavTab[] {
-      const list:NavTab[] = [];
-      treeToList(list, this.allNavTabs);
-      return list;
-    },
-  },
-  actions: {
-    updateCurrentNavTab(nav: NavTab) {
-      this.currentNavTab = nav;
-    },
-    updateCollectNavTabs(nav: NavTab) {
-      const findNav = (allNavTabs:NavTab[], nav:NavTab) => {
-        allNavTabs.forEach((item) => {
-          if (item.ID === nav.ID) {
-            item.collect = !item.collect;
-            const index = this.collectNavTabs.findIndex((item) => item.ID === nav?.ID);
-            if (item.collect) {
-              if (index !== -1) return;
-              this.collectNavTabs.push(nav);
-            } else {
-              this.collectNavTabs.splice(index, 1);
+    actions: {
+        updateCurrentNavTab(nav: NavTab) {
+            this.currentNavTab = nav;
+        },
+        updateCollectNavTabs(nav: NavTab) {
+            const findNav = (allNavTabs:NavTab[], navTab:NavTab) => {
+                allNavTabs.forEach((item) => {
+                    if (item.path === navTab.path) {
+                        item.collect = !item.collect;
+                        const index = this.collectNavTabs.findIndex((sub) => sub.path === navTab?.path);
+                        if (item.collect) {
+                            if (index !== -1) return;
+                            this.collectNavTabs.push(navTab);
+                        } else {
+                            this.collectNavTabs.splice(index, 1);
+                        }
+                    } else if (item.children && item.children.length > 0) findNav(item.children, navTab);
+                });
+            };
+            // 收藏和取消
+            findNav(this.allNavTabs, nav);
+        },
+        updateCurrentNavTabs() {
+            const isExist = this.currentNavTabs.find((item) => item.path === this.currentNavTab?.path);
+            if (!isExist && this.currentNavTab) {
+                this.currentNavTabs.push(this.currentNavTab);
             }
-          } else {
-            item.children && item.children.length > 0 && findNav(item.children, nav);
-          }
-        });
-      };
-      // 收藏和取消
-      findNav(this.allNavTabs, nav);
+        },
+        updateCurrentNavTabsByPath(path:string) {
+            const router = useRouter;
+            const isExist = this.currentNavTabs.find((item) => item?.path === path);
+            const route = router.getRoutes().find((item) => item.path === path);
 
-      sessionStorage.setItem(settingsEnum.COLLECT_TAB, JSON.stringify(this.collectNavTabs));
-    },
-    updateCurrentNavTabs() {
-      const isExist = this.currentNavTabs.find((item) => item.ID === this.currentNavTab?.ID);
-      if (!isExist && this.currentNavTab) {
-        this.currentNavTabs.push(this.currentNavTab);
-      }
-    },
-    updateCurrentNavTabById(ID: string) {
-      const isExist = this.currentNavTabs.find((item) => item.ID === ID);
-      if (isExist) this.currentNavTab = isExist;
-    },
-    removeCurrentNavTabById(ID: string) {
-      const index = this.currentNavTabs.findIndex((item) => item.ID === ID);
-      if (index !== -1) this.currentNavTabs.splice(index, 1);
+            if (!route || route?.meta.openTab === false) return;
 
-      // 切换tab 只有当前选中的被删除才会切换tab
-      if (this.currentNavTab?.ID !== ID) return;
-      const totalLen = this.currentNavTabs.length;
-      // 总长度大于1，有目标可选
-      if (totalLen > 0) {
-        // 看看向左还是向右
-        if (totalLen - index > 1) {
-          // 右 index+1
-          this.currentNavTab = this.currentNavTabs[index];
-        } else {
-          // 左 index-1
-          this.currentNavTab = this.currentNavTabs[index - 1];
-        }
-      }
+            const navTab:NavTab = { path: route?.path, name: route?.name as string, meta: route?.meta as unknown as Meta };
+            if (!isExist) {
+                this.currentNavTabs.push(navTab);
+            }
+
+            this.currentNavTab = navTab;
+        },
+        updateCurrentNavTabById(path: string) {
+            const isExist = this.currentNavTabs.find((item) => item.path === path);
+            if (isExist) this.currentNavTab = isExist;
+        },
+        removeCurrentNavTabById(path: string) {
+            const index = this.currentNavTabs.findIndex((item) => item.path === path);
+            if (index !== -1) this.currentNavTabs.splice(index, 1);
+
+            // 切换tab 只有当前选中的被删除才会切换tab
+            if (this.currentNavTab?.path !== path) return;
+            const totalLen = this.currentNavTabs.length;
+            // 总长度大于1，有目标可选
+            if (totalLen > 0) {
+                // 看看向左还是向右
+                if (totalLen - index > 1) {
+                    // 右 index+1
+                    this.currentNavTab = this.currentNavTabs[index];
+                } else {
+                    // 左 index-1
+                    this.currentNavTab = this.currentNavTabs[index - 1];
+                }
+            }
+
+            if (this.currentNavTab.path) useRouter.push({ path: this.currentNavTab.path as any });
+        },
+        closeAll() {
+            const noClose = this.currentNavTabs.filter((item) => item.close !== true);
+            this.currentNavTabs = noClose;
+            if (noClose && noClose.length > 0) this.currentNavTab = noClose[0];
+        },
+        closeLeft(nav: NavTab) {
+            const index = this.currentNavTabs.findIndex((item) => item.path === nav.path);
+            const currentIndex = this.getCurrentNavTabIndex;
+
+            this.currentNavTabs = this.currentNavTabs.filter((item, i) => (i >= index || item.close !== true));
+            if (currentIndex < index) this.currentNavTab = nav;
+        },
+        closeRight(nav: NavTab) {
+            const index = this.currentNavTabs.findIndex((item) => item.path === nav.path);
+            const currentIndex = this.getCurrentNavTabIndex;
+
+            this.currentNavTabs = this.currentNavTabs.filter((item, i) => (i <= index || item.close !== true));
+            if (currentIndex > index) this.currentNavTab = nav;
+        },
+        reloadNavTab() {
+            this.reload = true;
+            if (this.currentNavTab?.meta?.keepAlive === true) {
+                this.currentNavTabs.forEach((item) => {
+                    if (item.path === this.currentNavTab?.path) {
+                        if (item?.meta?.keepAlive === true) item.meta.keepAlive = false;
+                    }
+                });
+            }
+            setTimeout(() => {
+                this.reload = false;
+                if (this.currentNavTab?.meta?.keepAlive === true) {
+                    this.currentNavTabs.forEach((item) => {
+                        if (item.path === this.currentNavTab?.path) {
+                            if (item?.meta?.keepAlive === false) item.meta.keepAlive = true;
+                        }
+                    });
+                }
+            }, 200);
+        },
+
+        async getMenuByUser() {
+            const result = await getBaseMenuTree();
+            const router = useRouter;
+
+            this.allNavTabs = result.menus || [];
+
+            this.initCollect();
+
+            const parentRouter: RouteRecordRaw = {
+                name: 'main',
+                path: '/',
+                component: () => import('@/layouts/Main.vue'),
+                redirect: 'dashboard',
+                children: [],
+            };
+            recursionMenu(parentRouter, result.menus);
+
+            const noFound: RouteRecordRaw = { path: '/404', component: () => import('@/layouts/error/404.vue') };
+            const other: RouteRecordRaw = { path: '/500', component: () => import('@/layouts/error/500.vue'), meta: { ignoreAuth: true } };
+            const noFoundAll: RouteRecordRaw = { path: '/:pathMatch(.*)', redirect: '/404' };
+            parentRouter.children?.push(noFound);
+            parentRouter.children?.push(other);
+            parentRouter.children?.push(noFoundAll);
+
+            router.addRoute(parentRouter);
+        },
+
+        initCollect() {
+            function recursionTab(list:NavTab[], collectNavTabs:NavTab[]) {
+                list.forEach((item) => {
+                    if (item.meta?.collect === true) {
+                        collectNavTabs.push(item);
+                    }
+                    if (item.children && item.children.length > 0) recursionTab(item.children, collectNavTabs);
+                });
+            }
+
+            recursionTab(this.allNavTabs, this.collectNavTabs);
+        },
     },
-    closeAll() {
-      const noClose = this.currentNavTabs.filter((item) => item.close !== true);
-      this.currentNavTabs = noClose;
-      this.currentNavTab = noClose[0];
-    },
-    closeLeft(nav: NavTab) {
-      const index = this.currentNavTabs.findIndex((item) => item.ID === nav.ID);
-      const currentIndex = this.getCurrentNavTabIndex;
-
-      this.currentNavTabs = this.currentNavTabs.filter((item, i) => (i >= index || item.close !== true));
-      if (currentIndex < index) this.currentNavTab = nav;
-    },
-    closeRight(nav: NavTab) {
-      const index = this.currentNavTabs.findIndex((item) => item.ID === nav.ID);
-      const currentIndex = this.getCurrentNavTabIndex;
-
-      this.currentNavTabs = this.currentNavTabs.filter((item, i) => (i <= index || item.close !== true));
-      if (currentIndex > index) this.currentNavTab = nav;
-    },
-    reloadNavTab() {
-      this.reload = true;
-      setTimeout(() => this.reload = false, 500);
-    },
-
-    async getMenuByUser() {
-      loading.base('正在加载菜单，请稍等...');
-      try {
-        const result = await getBaseMenuTree();
-        const router = useRouter;
-
-        this.allNavTabs = result.menus || [];
-
-        const parentRouter: RouteRecordRaw = {
-          name: 'main',
-          path: '/',
-          component: () => import('@/layouts/Main.vue'),
-          redirect: '/dashboard',
-          children: [],
-        };
-        recursionMenu(parentRouter, result.menus);
-
-        const noFound: RouteRecordRaw = { path: '/404', component: () => import('@/layouts/error/404.vue') };
-        const noFoundAll: RouteRecordRaw = { path: '/:pathMatch(.*)', redirect: '/404' };
-        parentRouter.children?.push(noFound);
-        parentRouter.children?.push(noFoundAll);
-
-        router.addRoute(parentRouter);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        loading.hide();
-      }
-    },
-  },
 });

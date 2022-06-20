@@ -1,11 +1,11 @@
 <template>
-  <q-scroll-area
-    v-bind="$attrs"
-    ref="scrollAreaRef"
-    class="col"
-  >
-    <slot />
-  </q-scroll-area>
+    <q-scroll-area
+        v-bind="$attrs"
+        ref="scrollAreaRef"
+        class="col"
+    >
+        <slot />
+    </q-scroll-area>
 </template>
 
 <script setup lang="ts">
@@ -18,7 +18,7 @@ defineExpose({ scrollAreaRef });
 </script>
 <script lang="ts">
 export default {
-  name: 'XScrollArea',
+    name: 'XScrollArea',
 };
 </script>
 

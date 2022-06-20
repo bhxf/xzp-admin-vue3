@@ -4,6 +4,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@/store/*": ["src/store/*"],
+      "monaco-editor": ["monaco-editor/esm/vs/editor/editor.api.js"]
     },
     "target": "esnext",
     "useDefineForClassFields": true,
@@ -18,6 +19,6 @@
     "lib": ["esnext", "dom"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["node_modules", "dist", "**/*.js"],
+  "exclude": ["node_modules", "dist", "docker", "**/*.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -10,9 +10,7 @@
                 name="r_help_outline"
             />
             <div class="text-weight-bold text-h6">
-                未找到
-                <span class="text-red">({{ navTabStore.currentNavTab?.meta?.title }})</span>
-                页面
+                服务器错误
             </div>
             <q-btn
                 color="red"

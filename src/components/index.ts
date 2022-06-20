@@ -1,17 +1,17 @@
 import XForm from '@/components/XForm/index.vue';
 import {
-  QForm,
+    QForm,
 
-  QBtnToggle,
-  QCheckbox,
-  QDate,
-  QInput,
-  QOptionGroup,
-  QRadio,
-  QRange,
-  QSelect,
-  QTime,
-  QToggle,
+    QBtnToggle,
+    QCheckbox,
+    QDate,
+    QInput,
+    QOptionGroup,
+    QRadio,
+    QRange,
+    QSelect,
+    QTime,
+    QToggle, QTree,
 } from 'quasar';
 import XBtnGroup from '@/components/XBtnGroup/index.vue';
 import XField from '@/components/XForm/XField.vue';
@@ -43,6 +43,10 @@ export interface BaseFunction {
   // eslint-disable-next-line no-unused-vars
   (params?: any):void;
 }
+export interface BaseFunctionReturn {
+  // eslint-disable-next-line no-unused-vars
+  (params?: any):any;
+}
 export interface ChangeCallback {
   // eslint-disable-next-line no-unused-vars
   (getObj: BaseFunction, updateObj: BaseFunction, updateObjConfig: BaseFunction):void
@@ -61,6 +65,7 @@ export interface ListRef {
 export interface TreeRef {
   loadData: BaseFunction,
   updateTicked: BaseFunction,
+  treeRef:QTree
 }
 export interface TableRef {
   loadData: BaseFunction,
@@ -116,10 +121,12 @@ export interface Column {
   sortOrder?: 'ad' | 'da',
   format?: FormatFunction,
   style?: string | BaseFunction,
+  width?: number,
   classes?: string | BaseFunction,
   headerStyle?: string,
   headerClasses?: string,
   edit?:boolean,
+  editFormat?:BaseFunction,
   components?:ComponentsType,
   componentsProps?:any,
 }
@@ -139,31 +146,35 @@ export interface Field {
   componentsProps?: any,
   changeCallback?: ChangeCallback
 }
+export interface ValidateError {
+  error:boolean,
+  errorMessage:string
+}
 
 const componentsType: any = {
-  input: QInput,
-  icon: XIcon,
-  inputTree: XInputTree,
-  select: QSelect,
-  radio: QRadio,
-  checkbox: QCheckbox,
-  toggle: QToggle,
-  btnToggle: QBtnToggle,
-  optionGroup: QOptionGroup,
-  range: QRange,
-  time: QTime,
-  date: QDate,
+    input: QInput,
+    icon: XIcon,
+    inputTree: XInputTree,
+    select: QSelect,
+    radio: QRadio,
+    checkbox: QCheckbox,
+    toggle: QToggle,
+    btnToggle: QBtnToggle,
+    optionGroup: QOptionGroup,
+    range: QRange,
+    time: QTime,
+    date: QDate,
 };
 const getComponentsByName = (name: string) => componentsType[name || 'input'];
 export {
-  XBtnGroup,
-  XForm,
-  XField,
-  XFormArea,
-  XTable,
-  XSearchForm,
-  XTree,
-  XInputTree,
+    XBtnGroup,
+    XForm,
+    XField,
+    XFormArea,
+    XTable,
+    XSearchForm,
+    XTree,
+    XInputTree,
 
-  getComponentsByName,
+    getComponentsByName,
 };
