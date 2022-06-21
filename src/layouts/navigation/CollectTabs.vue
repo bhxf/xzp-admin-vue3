@@ -7,7 +7,7 @@
             mobile-arrows
             align="left"
             class="tabs"
-            active-class="active"
+            active-class="active glossy"
         >
             <q-tab
                 v-for="collectTab in collectTabs"
@@ -52,7 +52,7 @@ import { NavTab, useNavTabStore } from '@/store/settings/navigation';
 import { computed } from 'vue';
 import XCascade from '@/components/XCascade/index.vue';
 import useLayoutStore from '@/store/settings/layout';
-import { settingsEnum } from '@/tools/http';
+import { SettingsEnum } from '@/tools/http';
 import { useRouter } from '@/plugins/router';
 
 const navTabStore = useNavTabStore();
@@ -62,7 +62,7 @@ const active = computed({
     },
     set(ID: string) {
         navTabStore.collectActive = ID;
-        sessionStorage.setItem(settingsEnum.COLLECT_ACTIVE_TAB, ID);
+        sessionStorage.setItem(SettingsEnum.COLLECT_ACTIVE_TAB, ID);
     },
 });
 const collectTabs = computed(() => {

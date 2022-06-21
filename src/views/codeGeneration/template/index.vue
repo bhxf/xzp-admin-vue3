@@ -18,73 +18,143 @@
                     label-key="name"
 
                     @update:selected="updateSelected"
-                    @update:ticked="updateTicked"
                 >
                     <template #tools>
                         <q-btn
+                            color="primary"
                             flat
                             dense
                             round
-                            color="primary"
-                            icon="o_add"
-                            @click="onAdd"
-                        />
+                            icon="r_folder_open"
+                            @click="onAddFolder"
+                        >
+                            <q-tooltip>新增文件夹</q-tooltip>
+                        </q-btn>
                         <q-btn
+                            color="primary"
+                            flat
+                            dense
+                            round
+                            icon="r_description"
+                            @click="onAddFile"
+                        >
+                            <q-tooltip>新增文件</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                            color="orange"
                             :disable="isEdit"
                             flat
                             dense
                             round
-                            icon="o_edit"
-                            color="orange"
-                            @click="onEdit"
-                        />
+                            icon="r_edit"
+                            @click="onEditName"
+                        >
+                            <q-tooltip>修改名称</q-tooltip>
+                        </q-btn>
                         <q-btn
                             :disable="isDel"
                             flat
                             dense
                             round
-                            icon="o_delete"
+                            icon="r_delete"
                             color="red"
-                            @click="onDel"
+                            @click="onDelete"
                         />
+                    </template>
+                    <template #default-header="prop">
+                        <div class="row items-center">
+                            <q-icon :name="prop.node.codeType === 'folder' ?'r_folder_open' :'r_description'"/>
+                            <div class="text-weight-bold">
+                                {{ prop.node.name }}
+                            </div>
+                        </div>
+                        <q-menu
+                            class="shadow-10 text-weight-medium text-grey-8"
+                            touch-position
+                            context-menu
+                            auto-close
+                        >
+                            <q-list
+                                dense
+                                padding
+                            >
+                                <q-item
+                                    clickable
+                                    @click="onAddFolder(prop.node)"
+                                >
+                                    <q-item-section>
+                                        <div class="row no-wrap items-center q-gutter-x-sm">
+                                            <q-icon
+                                                color="primary"
+                                                size="xs"
+                                                name="r_folder_open"
+                                            />
+                                            <q-item-label lines="1">
+                                                新建文件夹
+                                            </q-item-label>
+                                        </div>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item
+                                    clickable
+                                    @click="onAddFile(prop.node)"
+                                >
+                                    <q-item-section>
+                                        <div class="row no-wrap items-center q-gutter-x-sm">
+                                            <q-icon
+                                                color="primary"
+                                                size="xs"
+                                                name="r_description"
+                                            />
+                                            <q-item-label lines="1">
+                                                新建文件
+                                            </q-item-label>
+                                        </div>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item
+                                    clickable
+                                    @click="onEditName(prop.node)"
+                                >
+                                    <q-item-section>
+                                        <div class="row no-wrap items-center q-gutter-x-sm">
+                                            <q-icon
+                                                color="orange"
+                                                size="xs"
+                                                name="r_edit"
+                                            />
+                                            <q-item-label lines="1">
+                                                修改名称
+                                            </q-item-label>
+                                        </div>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item
+                                    clickable
+                                    @click="onDelete(prop.node)"
+                                >
+                                    <q-item-section>
+                                        <div class="row no-wrap items-center q-gutter-x-sm">
+                                            <q-icon
+                                                color="red"
+                                                size="xs"
+                                                name="r_delete"
+                                            />
+                                            <q-item-label lines="1">
+                                                删除
+                                            </q-item-label>
+                                        </div>
+                                    </q-item-section>
+                                </q-item>
+                            </q-list>
+                        </q-menu>
                     </template>
                 </x-tree>
             </div>
-            <!--新增菜单-->
-            <x-dialog v-model="loadings['add']">
-                <template #title>
-                    <div class="text-h6">
-                        {{ getTitle }}
-                    </div>
-                </template>
-                <x-form
-                    ref="formRef"
-                    :fields="initMenuForm"
-                />
-                <template #actions>
-                    <q-btn
-                        :loading="loadings['save']"
-                        color="primary"
-                        unelevated
-                        label="保存"
-                        @click="onSave"
-                    />
-                    <q-btn
-                        v-close-popup
-                        flat
-                        label="取消"
-                    />
-                </template>
-            </x-dialog>
         </template>
 
         <template #after>
-            <div :style="getHeight">
-                <XMonaco
-                    v-model="code"
-                    :model="getModel"
-                />
-            </div>
+            <TemplateDetail ref="detailRef" />
         </template>
     </q-splitter>
 </template>
@@ -93,12 +163,12 @@
 import { computed, ref } from 'vue';
 import XTree from '@/components/XTree/index.vue';
 import XForm from '@/components/XForm/index.vue';
-
-import { dialog, notify } from '@/hooks/message';
+import { notify } from '@/hooks/message';
 import XDialog from '@/components/XDialog/index.vue';
 import useLayoutStore from '@/store/settings/layout';
 import {
-    actionCondition, actionConst, actionLoading, actionRef, actionTitle,
+    actionCondition,
+    actionConst, actionLoading, actionRef, actionTitle,
 } from '@/tools/action/curd';
 import {
     createCodeTemplate,
@@ -106,85 +176,126 @@ import {
     getCodeTemplateTree,
     updateCodeTemplate,
 } from '@/api/codeGeneration/template';
-import XMonaco from '@/components/XMonaco/index.vue';
+import { templateForm } from '@/views/codeGeneration/template/data';
 import { useQuasar } from 'quasar';
+import TemplateDetail from '@/views/codeGeneration/template/detail.vue';
 
-const code = ref('');
-const name = ref('');
-
-const { action, getTitle } = actionTitle('角色');
-const { formRef, treeRef } = actionRef();
+const $q = useQuasar();
+const selectedNode = ref();
+const { action, getTitle } = actionTitle('');
+const { formRef, treeRef, detailRef } = actionRef();
 const { loadings } = actionLoading('add', 'save');
 const {
-    treeSelected, treeTicked,
+    treeSelected,
+    treeTicked,
 } = actionConst();
 const { isEdit, isDel } = actionCondition(treeSelected, treeTicked);
 
+const initValue = () => {
+    selectedNode.value = null;
+    treeSelected.value = '';
+};
 const updateSelected = (value: any) => {
     treeSelected.value = value;
     const node = treeRef?.value?.treeRef.getNodeByKey(value);
-    code.value = node?.context || '';
-    name.value = node?.name || '';
+    selectedNode.value = node;
+    detailRef.value?.loadData(value);
 };
-const updateTicked = (value: any[]) => {
-    treeTicked.value = value;
+const handleSave = async (info:any) => {
+    if (action.value === 'add') await createCodeTemplate(info);
+    else await updateCodeTemplate(info);
+
+    notify.success(`${getTitle.value}成功`);
+
+    initValue();
+    treeRef.value?.loadData();
 };
-
-const onSave = async () => {
-    const bool = await formRef.value?.getFormRef.validate();
-    if (bool) {
-        loadings.value.save = true;
-        const info = JSON.parse(JSON.stringify(formRef.value?.formInfo));
-        try {
-            if (!info.parentId) {
-                info.parentId = 0;
-            }
-
-            info.parentId = info.parentId.toString();
-            if (action.value === 'add') await createCodeTemplate(info);
-            else await updateCodeTemplate(info);
-
-            notify.success(`${getTitle.value}菜单成功`);
-
-            loadings.value.add = false;
-            treeRef.value?.loadData();
-        } finally {
-            loadings.value.save = false;
-        }
-    }
-};
-const onAdd = () => {
+const onAddFolder = (node:any) => {
     action.value = 'add';
-    loadings.value.add = true;
+    const parentId = node?.ID || selectedNode.value?.ID;
+
+    $q.dialog({
+        title: '新建文件夹',
+        prompt: {
+            model: '',
+            isValid: (val) => val.length > 0,
+            type: 'text',
+        },
+        cancel: true,
+        persistent: true,
+    }).onOk((data) => {
+        const info = {
+            codeType: 'folder',
+            name: data,
+            parentId,
+        };
+        handleSave(info);
+    });
 };
-const onEdit = async () => {
-    // action.value = 'edit';
-    // const { menu } = await getBaseMenuById({ id: treeSelected.value || treeTicked.value[0].ID });
-    // loadings.value.add = true;
-    // await nextTick();
-    // const detail: any = menu;
-    // detail.icon = menu.meta?.icon;
-    // detail.title = menu.meta?.title;
-    // detail.keepAlive = menu.meta?.keepAlive;
-    // detail.closeTab = menu.meta?.closeTab;
-    // formRef.value?.updateObj(detail);
+const onAddFile = (node:any) => {
+    action.value = 'add';
+    const parentId = node?.ID || selectedNode.value?.ID;
+    $q.dialog({
+        title: '新建文件',
+        prompt: {
+            model: '',
+            isValid: (val) => val.length > 0,
+            type: 'text',
+        },
+        cancel: true,
+        persistent: true,
+    }).onOk((data) => {
+        const info = {
+            codeType: 'file',
+            name: data,
+            parentId,
+        };
+        console.log(info);
+        handleSave(info);
+    });
 };
-const onDel = async () => {
-    dialog.confirm('操作提示', '你确定要删除吗？', async () => {
-        await deleteCodeTemplate({ id: treeSelected.value });
-        notify.success('删除成功');
+const onEditName = (node:any) => {
+    action.value = 'edit';
+    const ID = node?.ID || selectedNode.value?.ID;
+    const name = node?.name || selectedNode.value?.name;
+    const codeType = node?.codeType || selectedNode.value?.codeType;
+    $q.dialog({
+        title: '修改名称',
+        prompt: {
+            model: name,
+            isValid: (val) => val.length > 0,
+            type: 'text',
+        },
+        cancel: true,
+        persistent: true,
+    }).onOk((data) => {
+        const info = {
+            codeType,
+            name: data,
+            ID,
+        };
+        handleSave(info);
+    });
+};
+const onDelete = (node:any) => {
+    action.value = 'del';
+    const ID = node?.ID || selectedNode.value?.ID;
+
+    $q.dialog({
+        title: '删除提示',
+        message: '你确定要删除吗?',
+        cancel: true,
+        persistent: true,
+    }).onOk(async () => {
+        await deleteCodeTemplate({ ID });
+        notify.success(`${getTitle.value}成功`);
+        initValue();
         treeRef.value?.loadData();
-    }, () => {
     });
 };
 
 const splitterModel = ref(300);
 const getHeight = computed(() => ({ height: useLayoutStore().getPageHeight }));
-const getModel = computed(() => {
-    const modelType = name.value.split('.');
-    console.log(modelType);
-    return modelType[modelType.length - 1];
-});
 
 </script>
 <script lang="ts">

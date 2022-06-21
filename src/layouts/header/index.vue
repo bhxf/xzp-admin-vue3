@@ -34,9 +34,9 @@
 
                 <q-btn
                     color="primary"
-                    outline
                     dense
                     rounded
+                    class="glossy"
                 >
                     <q-badge
                         color="red"

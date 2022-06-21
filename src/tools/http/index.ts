@@ -1,8 +1,10 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, {
+    AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse,
+} from 'axios';
 import { useRouter } from '@/plugins/router';
 import { notify } from '@/hooks/message';
 
-export enum settingsEnum {
+enum SettingsEnum {
     TOKEN = 'x-token',
     DICTIONARY = 'x-dictionary',
     USER = 'x-user',
@@ -43,17 +45,17 @@ class XRequest {
                     return;
                 }
 
-                const xToken = sessionStorage.getItem(settingsEnum.TOKEN);
-                if (!xToken) {
-                    reject('账号已失效');
+                const xToken = sessionStorage.getItem(SettingsEnum.TOKEN);
+                if (xToken) {
+                    config.headers && (config.headers[SettingsEnum.TOKEN_NAME] = xToken);
+                    resolve(config);
                     return;
                 }
 
-                config.headers && (config.headers[settingsEnum.TOKEN_NAME] = xToken);
-                resolve(config);
+                reject('账号已失效');
             }),
-            (error: any) => {
-                notify.error(error);
+            (error: AxiosError) => {
+                notify.error(error.message);
             },
         );
         this.instance.interceptors.response.use(
@@ -76,9 +78,9 @@ class XRequest {
                     resolve(data);
                 });
             },
-            (error: any) => {
-                notify.error(error);
-                return Promise.reject(error);
+            (error: AxiosError) => {
+                notify.error(error.message);
+                return Promise.reject(error.message);
             },
         );
     }
@@ -120,6 +122,12 @@ class XRequest {
 
 export default XRequest;
 
-export const xRequest = new XRequest({
+const xRequest = new XRequest({
     baseURL: '/api',
+    timeout: 10000,
 });
+
+export {
+    xRequest,
+    SettingsEnum,
+};

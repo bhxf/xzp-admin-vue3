@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { login, LoginRequest, User } from '@/api/system/login';
 import { useRouter } from '@/plugins/router';
-import { settingsEnum } from '@/tools/http';
+import { SettingsEnum } from '@/tools/http';
 import { loading, notify } from '@/hooks/message';
 import { getSysDictionaryDetailAllList } from '@/api/system/dictionary';
 
@@ -11,7 +11,7 @@ interface BaseStore {
 }
 
 export function getUser() {
-    const user = sessionStorage.getItem(settingsEnum.USER);
+    const user = sessionStorage.getItem(SettingsEnum.USER);
     return user && JSON.parse(user);
 }
 
@@ -35,12 +35,12 @@ export const useBaseStore = defineStore('baseStore', {
                 const result = await login(data);
                 this.user = result.user;
                 this.token = result.token;
-                sessionStorage.setItem(settingsEnum.TOKEN, result.token);
-                sessionStorage.setItem(settingsEnum.USER, JSON.stringify(result.user));
+                sessionStorage.setItem(SettingsEnum.TOKEN, result.token);
+                sessionStorage.setItem(SettingsEnum.USER, JSON.stringify(result.user));
 
                 // 获取字典
                 const dictionary = await getSysDictionaryDetailAllList();
-                sessionStorage.setItem(settingsEnum.DICTIONARY, JSON.stringify(dictionary.list));
+                sessionStorage.setItem(SettingsEnum.DICTIONARY, JSON.stringify(dictionary.list));
 
                 const router = useRouter;
                 await router.push({ path: '/' });

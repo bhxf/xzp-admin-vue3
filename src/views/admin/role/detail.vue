@@ -171,7 +171,7 @@ import { computed, ref } from 'vue';
 import { getAllApis, getPolicyPathByAuthorityId } from '@/api/system/api';
 import { notify } from '@/hooks/message';
 import { updateCasbin } from '@/api/system/casbin';
-import { TreeRef } from '@/components/XTree/index';
+import { TreeRef } from '@/components';
 
 interface Props {
     authId: any

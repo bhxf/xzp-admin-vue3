@@ -9,6 +9,8 @@ const ActionTitle: any = {
     add: '新增',
     edit: '编辑',
     del: '删除',
+    folder: '文件夹',
+    field: '文件',
 };
 
 export const actionTitle = (title: string) => {

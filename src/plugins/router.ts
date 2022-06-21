@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
-import { settingsEnum } from '@/tools/http';
+import { SettingsEnum } from '@/tools/http';
 import { Notify } from 'quasar';
 import { useNavTabStore } from '@/store/settings/navigation';
 import { loading } from '@/hooks/message';
@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 是否已登录过
-    const token = sessionStorage.getItem(settingsEnum.TOKEN);
+    const token = sessionStorage.getItem(SettingsEnum.TOKEN);
     if (!token) {
         Notify.create(
             { type: 'negative', message: '令牌已失效，请重新登录。', position: 'top-right' },
@@ -49,6 +49,7 @@ router.beforeEach(async (to, from, next) => {
         } catch (e) {
             next({ path: 'error' });
         } finally {
+            navStore.isLoadMenu = true;
             loading.hide();
         }
     } else {

@@ -283,7 +283,7 @@ const getHeight = computed(() => ({ height: useLayoutStore().getPageHeight }));
 </script>
 <script lang="ts">
 export default {
-    name: 'Menu',
+    name: 'AdminMenu',
 };
 </script>
 

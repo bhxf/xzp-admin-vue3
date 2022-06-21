@@ -1,16 +1,17 @@
 <template>
     <div class="flex column col q-gutter-y-xs">
         <div class="tools flex column col-auto q-gutter-y-xs">
-            <div class="q-pl-sm q-pr-sm q-pt-xs flex row">
+            <div class="q-pl-sm q-pr-sm q-pt-xs row item items-center">
                 <slot
                     name="tools"
                     v-bind="{ticked,selected,expanded}"
                 />
                 <q-space />
                 <q-btn
-                    color="primary"
                     flat
                     dense
+                    rounded
+                    color="primary"
                     round
                     icon="r_expand"
                     @click="onExpandAll"
@@ -20,9 +21,10 @@
                     </q-tooltip>
                 </q-btn>
                 <q-btn
-                    color="primary"
                     flat
                     dense
+                    rounded
+                    color="primary"
                     round
                     icon="r_vertical_align_center"
                     @click="onCollapseAll"
@@ -33,9 +35,10 @@
                 </q-btn>
                 <slot name="refresh">
                     <q-btn
-                        color="primary"
                         flat
                         dense
+                        rounded
+                        color="primary"
                         round
                         icon="refresh"
                         @click="loadData"

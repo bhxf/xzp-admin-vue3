@@ -31,6 +31,7 @@ export const notify = {
 export const loading = {
     base: (message: string) => {
         Loading.show({
+            boxClass: 'bg-grey-2 text-grey-9',
             message,
             spinnerColor: 'primary',
         });

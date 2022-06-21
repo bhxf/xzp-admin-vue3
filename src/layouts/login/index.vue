@@ -4,8 +4,7 @@
         style="height: 100vh"
     >
         <q-card
-            style="width: 450px;"
-            class="q-pa-sm"
+            class="q-pa-sm login"
         >
             <q-card-section class="row justify-center text-h5">
                 系统登录
@@ -15,7 +14,7 @@
                     <q-input
                         v-model="username"
                         :rules="[ val => val && val.length > 0 || '请输入用户名']"
-                        standout
+                        standout="bg-blue"
                         @keydown.enter="onLogin"
                     >
                         <template #prepend>
@@ -26,7 +25,7 @@
                         v-model="password"
                         :rules="[ val => val && val.length > 0 || '请输入密码']"
                         :type="visibility?'password':'text'"
-                        standout
+                        standout="bg-blue"
                         @keydown.enter="onLogin"
                     >
                         <template #prepend>
@@ -45,7 +44,7 @@
                     <q-input
                         v-model="code"
                         :rules="[ val => val && val.length > 0 || '请输入验证码']"
-                        standout
+                        standout="bg-blue"
                         @keydown.enter="onLogin"
                     >
                         <template #prepend>
@@ -65,6 +64,7 @@
                                     flat
                                     dense
                                     rounded
+                                    unelevated
                                     icon="refresh"
                                     @click="reloadCodeImg"
                                 />
@@ -76,20 +76,29 @@
                     size="lg"
                     color="primary"
                     class="full-width"
+                    unelevated
                     @click="onLogin"
                 >
                     登录
                 </q-btn>
             </q-card-section>
         </q-card>
+
+        <ParticlesComponent
+            id="tsparticles"
+            :particles-init="particlesInit"
+            :particles-loaded="particlesLoaded"
+            :options="options"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { CaptchaResponse, getCaptcha, login } from '@/api/system/login';
+import { CaptchaResponse, getCaptcha } from '@/api/system/login';
 import { useBaseStore } from '@/store/system/base';
-import { Loading, QSpinnerGears } from 'quasar';
+import { ParticlesComponent } from 'particles.vue3';
+import { loadFull } from 'tsparticles';
 
 const loginForm = ref<{ validate: any } | null>(null);
 const visibility = ref<boolean>(true);
@@ -97,6 +106,120 @@ const username = ref<string>('');
 const password = ref<string>('');
 const code = ref<string>('');
 const captcha = ref<CaptchaResponse>();
+const options = ref({
+    background: {
+        color: {
+            value: '#0d47a1',
+        },
+        position: '50% 50%',
+        repeat: 'no-repeat',
+        size: 'cover',
+    },
+    fullScreen: {
+        zIndex: 1,
+    },
+    interactivity: {
+        events: {
+            onClick: {
+                enable: true,
+                mode: 'repulse',
+            },
+            onHover: {
+                enable: true,
+                mode: 'bubble',
+            },
+        },
+        modes: {
+            bubble: {
+                distance: 400,
+                duration: 0.3,
+                opacity: 1,
+                size: 4,
+                divs: {
+                    distance: 200,
+                    duration: 0.4,
+                    mix: false,
+                    selectors: [],
+                },
+            },
+            grab: {
+                distance: 400,
+                links: {
+                    opacity: 0.5,
+                },
+            },
+            repulse: {
+                divs: {
+                    distance: 200,
+                    duration: 0.4,
+                    factor: 100,
+                    speed: 1,
+                    maxSpeed: 50,
+                    easing: 'ease-out-quad',
+                    selectors: [],
+                },
+            },
+        },
+    },
+    particles: {
+        links: {
+            color: {
+                value: '#ffffff',
+            },
+            distance: 500,
+            opacity: 0.4,
+            width: 2,
+        },
+        move: {
+            attract: {
+                rotate: {
+                    x: 600,
+                    y: 1200,
+                },
+            },
+            direction: 'bottom',
+            enable: true,
+            outModes: {
+                bottom: 'out',
+                left: 'out',
+                right: 'out',
+                top: 'out',
+            },
+        },
+        number: {
+            density: {
+                enable: true,
+            },
+            value: 400,
+        },
+        opacity: {
+            random: {
+                enable: true,
+            },
+            value: {
+                min: 0.1,
+                max: 0.5,
+            },
+            animation: {
+                speed: 1,
+                minimumValue: 0.1,
+            },
+        },
+        size: {
+            random: {
+                enable: true,
+            },
+            value: {
+                min: 1,
+                max: 10,
+            },
+            animation: {
+                speed: 40,
+                minimumValue: 0.1,
+            },
+        },
+    },
+});
 
 const baseStore = useBaseStore();
 
@@ -120,6 +243,13 @@ const onLogin = async () => {
     }
 };
 
+const particlesInit = async (engine) => {
+    await loadFull(engine);
+};
+
+const particlesLoaded = async (container) => {
+    console.log('Particles container loaded', container);
+};
 reloadCodeImg();
 
 </script>
@@ -129,5 +259,12 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="sass">
+.login
+    width: 450px
+    z-index: 2
+    background: rgb(white,0.4)
+.x-form
+    ::v-deep(.q-field__bottom)
+        padding: 4px 12px 0 !important
 </style>

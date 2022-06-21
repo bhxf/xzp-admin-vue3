@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 
 import setupClipboard from '@/plugins/clipboard';
 import setupCodemirror from '@/plugins/codemirror';
+import setupParticles from '@/plugins/particles';
 import App from './App.vue';
 
 import setupQuasar from './plugins/quasar';
@@ -16,5 +17,6 @@ setupQuasar(app);
 setupRouter(app);
 setupClipboard(app);
 setupCodemirror(app);
+setupParticles(app);
 
 app.mount('#app');

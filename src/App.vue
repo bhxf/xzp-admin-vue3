@@ -5,12 +5,12 @@
 <script setup lang="ts">
 import { NavTab, useNavTabStore } from '@/store/settings/navigation';
 import { computed, watch } from 'vue';
-import { settingsEnum } from '@/tools/http';
+import { SettingsEnum } from '@/tools/http';
 
 const navTabStore = useNavTabStore();
 const currentNavTabs = computed(() => navTabStore.currentNavTabs);
 
 watch(currentNavTabs, (value: NavTab[]) => {
-    sessionStorage.setItem(settingsEnum.TABS, JSON.stringify(value));
+    sessionStorage.setItem(SettingsEnum.TABS, JSON.stringify(value));
 }, { deep: true });
 </script>

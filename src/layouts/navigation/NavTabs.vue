@@ -33,7 +33,7 @@
                                 {{ navTab?.meta?.title }}
                             </div>
                             <q-btn
-                                v-if="navTab?.meta?.closeTab != false"
+                                v-if="navTab?.meta?.closeTab !== false"
                                 color="red"
                                 flat
                                 round
@@ -48,6 +48,7 @@
                             </q-btn>
                             <q-menu
                                 fit
+                                class="shadow-10 text-weight-medium text-grey-8"
                                 touch-position
                                 context-menu
                                 auto-close
@@ -63,8 +64,7 @@
                                         <q-item-section>
                                             <div class="row no-wrap items-center q-gutter-x-sm">
                                                 <q-icon
-                                                    size="20px"
-                                                    color="red"
+                                                    size="xs"
                                                     name="r_last_page"
                                                 />
                                                 <q-item-label lines="1">
@@ -79,8 +79,7 @@
                                     >
                                         <div class="row no-wrap items-center q-gutter-x-sm">
                                             <q-icon
-                                                size="20px"
-                                                color="red"
+                                                size="xs"
                                                 name="r_first_page"
                                             />
                                             <q-item-label lines="1">
@@ -94,8 +93,7 @@
                                     >
                                         <div class="row no-wrap items-center q-gutter-x-sm">
                                             <q-icon
-                                                size="20px"
-                                                color="red"
+                                                size="xs"
                                                 name="r_highlight_off"
                                             />
                                             <q-item-label lines="1">

@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import {
-    defineProps, defineEmits, ref, nextTick, watch, onBeforeUnmount, toRaw, computed,
+    defineProps, defineEmits, ref, nextTick, watch, onBeforeUnmount, toRaw,
 } from 'vue';
 
 // eslint-disable-next-line import/no-unresolved
@@ -72,18 +72,13 @@ const emit = defineEmits(['update:modelValue']);
 const dom = ref<any>(null);
 const editor = ref<monaco.editor.IStandaloneCodeEditor>();
 
-watch(props, () => {
-    toRaw(editor.value)?.setValue(props.modelValue);
-    toRaw(editor.value)?.setModel(getModel());
-}, { deep: true });
-
-const getModel = () => {
-    const model = monaco.editor.createModel(props.modelValue, props.modelType);
-    return model;
+const setModel = (val:string, type:string) => {
+    const model = monaco.editor.createModel(val, type);
+    toRaw(editor.value)?.setModel(model);
 };
 const initMonaco = async () => {
     await nextTick();
-    editor.value = monaco.editor.create(dom.value, { ...props.options, model: getModel() });
+    editor.value = monaco.editor.create(dom.value, { ...props.options });
     toRaw(editor.value)?.onDidChangeModelContent(() => {
         const codeValue = toRaw(editor.value)?.getValue();
         emit('update:modelValue', codeValue);
@@ -100,6 +95,8 @@ initMonaco();
 onBeforeUnmount(() => {
     toRaw(editor.value)?.dispose();
 });
+
+defineExpose({ setModel });
 </script>
 <script lang="ts">
 export default {

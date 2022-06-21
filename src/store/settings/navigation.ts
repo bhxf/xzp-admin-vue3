@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { getBaseMenuTree } from '@/api/system/menu';
 import { useRouter } from '@/plugins/router';
 import { RouteRecordRaw } from 'vue-router';
-import { settingsEnum } from '@/tools/http';
+import { SettingsEnum } from '@/tools/http';
 
 export interface Meta {
     keepAlive?: boolean;
@@ -65,10 +65,10 @@ export const useNavTabStore = defineStore('navTabStore', {
         openMenu: false,
         isLoadMenu: false,
         currentNavTab: null,
-        currentNavTabs: JSON.parse(sessionStorage.getItem(settingsEnum.TABS) || '[]'),
+        currentNavTabs: JSON.parse(sessionStorage.getItem(SettingsEnum.TABS) || '[]'),
         collectNavTabs: [],
         allNavTabs: [],
-        collectActive: sessionStorage.getItem(settingsEnum.COLLECT_ACTIVE_TAB) || '',
+        collectActive: sessionStorage.getItem(SettingsEnum.COLLECT_ACTIVE_TAB) || '',
     }),
     getters: {
         getCurrentNavTabIndex(): number {
