@@ -1,143 +1,145 @@
 <template>
-    <q-splitter
-        v-model="splitterModel"
-        unit="px"
-    >
-        <template #before>
-            <div
-                class="flex column"
-                :style="getHeight"
-            >
-                <x-list
-                    ref="listRef"
-                    :api="getSysDictionaryList"
-                    name-key="ID"
-                    label-key="name"
-                    tick-strategy="leaf"
-                    keyword="name"
-
-                    @update:selected="updateSelected"
-                    @update:ticked="updateTicked"
+    <default-content>
+        <q-splitter
+            v-model="splitterModel"
+            unit="px"
+        >
+            <template #before>
+                <div
+                    class="flex column"
+                    :style="getHeight"
                 >
-                    <template #tools>
+                    <x-list
+                        ref="listRef"
+                        :api="getSysDictionaryList"
+                        name-key="ID"
+                        label-key="name"
+                        tick-strategy="leaf"
+                        keyword="name"
+
+                        @update:selected="updateSelected"
+                        @update:ticked="updateTicked"
+                    >
+                        <template #tools>
+                            <q-btn
+                                flat
+                                dense
+                                round
+                                color="primary"
+                                icon="o_add"
+                                @click="onAdd"
+                            />
+                            <q-btn
+                                :disable="isEdit"
+                                flat
+                                dense
+                                round
+                                icon="o_edit"
+                                color="orange"
+                                @click="onEdit"
+                            />
+                            <q-btn
+                                :disable="isDel"
+                                flat
+                                dense
+                                round
+                                icon="o_delete"
+                                color="red"
+                                @click="onDel"
+                            />
+                        </template>
+                        <template #item="{item}">
+                            <q-item-section>
+                                <q-item-label>
+                                    {{ item.name }}
+                                </q-item-label>
+                                <q-item-label caption>
+                                    {{ item.type }}
+                                </q-item-label>
+                            </q-item-section>
+                            <q-item-section side>
+                                <div class="row q-gutter-x-xs">
+                                    <q-btn
+                                        icon="r_content_copy"
+                                        color="primary"
+                                        flat
+                                        dense
+                                        round
+                                        @click.stop="onCopyCode(item.type)"
+                                    >
+                                        <q-tooltip>复制编码</q-tooltip>
+                                    </q-btn>
+                                    <q-toggle
+                                        v-model="item.status"
+                                        dense
+                                        color="primary"
+                                        @update:model-value="(value)=>updateStatus(value,item)"
+                                    />
+                                </div>
+                            </q-item-section>
+
+                            <q-inner-loading
+                                color="primary"
+                                :showing="item.loading"
+                                label="保存中"
+                                label-style="font-size: 1em"
+                            />
+                        </template>
+                    </x-list>
+                </div>
+
+                <!--新增-->
+                <x-dialog v-model="loadings['add']">
+                    <template #title>
+                        <div class="text-h6">
+                            {{ getTitle }}
+                        </div>
+                    </template>
+                    <x-form
+                        ref="formRef"
+                        :fields="dictionaryForm"
+                    />
+                    <template #actions>
                         <q-btn
-                            flat
-                            dense
-                            round
+                            :loading="loadings['save']"
                             color="primary"
-                            icon="o_add"
-                            @click="onAdd"
+                            label="保存"
+                            @click="onSave"
                         />
                         <q-btn
-                            :disable="isEdit"
+                            v-close-popup
                             flat
-                            dense
-                            round
-                            icon="o_edit"
-                            color="orange"
-                            @click="onEdit"
-                        />
-                        <q-btn
-                            :disable="isDel"
-                            flat
-                            dense
-                            round
-                            icon="o_delete"
-                            color="red"
-                            @click="onDel"
+                            label="取消"
+                            color="primary"
                         />
                     </template>
-                    <template #item="{item}">
-                        <q-item-section>
-                            <q-item-label>
-                                {{ item.name }}
-                            </q-item-label>
-                            <q-item-label caption>
-                                {{ item.type }}
-                            </q-item-label>
-                        </q-item-section>
-                        <q-item-section side>
-                            <div class="row q-gutter-x-xs">
-                                <q-btn
-                                    icon="r_content_copy"
-                                    color="primary"
-                                    flat
-                                    dense
-                                    round
-                                    @click.stop="onCopyCode(item.type)"
-                                >
-                                    <q-tooltip>复制编码</q-tooltip>
-                                </q-btn>
-                                <q-toggle
-                                    v-model="item.status"
-                                    dense
-                                    color="primary"
-                                    @update:model-value="(value)=>updateStatus(value,item)"
-                                />
-                            </div>
-                        </q-item-section>
+                </x-dialog>
+            </template>
 
-                        <q-inner-loading
-                            color="primary"
-                            :showing="item.loading"
-                            label="保存中"
-                            label-style="font-size: 1em"
-                        />
-                    </template>
-                </x-list>
-            </div>
+            <template #after>
+                <x-table
+                    ref="tableRef"
+                    v-model:selected="tableSelected"
 
-            <!--新增-->
-            <x-dialog v-model="loadings['add']">
-                <template #title>
-                    <div class="text-h6">
-                        {{ getTitle }}
-                    </div>
-                </template>
-                <x-form
-                    ref="formRef"
-                    :fields="dictionaryForm"
+                    :load-first="false"
+                    :height="getHeight"
+
+                    :columns="dictionaryColumns"
+                    :btn-list="btnList"
+                    :search="search"
+                    :search-list="dictionarySearch"
+                    :api="getSysDictionaryDetailList"
+                    :add-row-boj="{status: true, sysDictionaryID: treeSelected,sort:0}"
+                    edit="row"
+
+                    row-key="ID"
+
+                    @update-done="updateDone"
+                    @update-del="updateDel"
                 />
-                <template #actions>
-                    <q-btn
-                        :loading="loadings['save']"
-                        color="primary"
-                        label="保存"
-                        @click="onSave"
-                    />
-                    <q-btn
-                        v-close-popup
-                        flat
-                        label="取消"
-                        color="primary"
-                    />
-                </template>
-            </x-dialog>
-        </template>
-
-        <template #after>
-            <x-table
-                ref="tableRef"
-                v-model:selected="tableSelected"
-
-                :load-first="false"
-                :height="getHeight"
-
-                :columns="dictionaryColumns"
-                :btn-list="btnList"
-                :search="search"
-                :search-list="dictionarySearch"
-                :api="getSysDictionaryDetailList"
-                :add-row-boj="{status: true, sysDictionaryID: treeSelected,sort:0}"
-                edit="row"
-
-                row-key="ID"
-
-                @update-done="updateDone"
-                @update-del="updateDel"
-            />
-        </template>
-    </q-splitter>
+            </template>
+        </q-splitter>
+    </default-content>
 </template>
 
 <script setup lang="ts">
@@ -168,6 +170,7 @@ import XTable from '@/components/XTable/index.vue';
 import XList from '@/components/XList/index.vue';
 import useLayoutStore from '@/store/settings/layout';
 import { BaseObj } from '@/types';
+import DefaultContent from '@/layouts/content/DefaultContent.vue';
 
 const { action, getTitle } = actionTitle('字典');
 const { formRef, tableRef, listRef } = actionRef();
@@ -182,7 +185,7 @@ const btnList = [
         icon: 'o_add',
         isDisable: () => !treeSelected.value,
         tooltip: '新增一行',
-        onClick: () => tableRef.value?.addFirst(),
+        onClick: () => tableRef.value?.addRow(),
     },
     {
         icon: 'o_delete',

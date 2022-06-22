@@ -29,7 +29,7 @@ export const menuForm:Field[] = [
         },
     },
     {
-        label: '图标', name: 'icon', col: 6, components: 'icon',
+        label: '图标', name: 'icon', col: 6, components: 'icon', defaultValue: 'r_insert_emoticon',
     },
     {
         label: '组件名称',

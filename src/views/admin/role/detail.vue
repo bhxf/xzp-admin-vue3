@@ -1,6 +1,5 @@
 <template>
     <div
-        style="height: 600px;"
         class="flex column"
     >
         <x-form-area

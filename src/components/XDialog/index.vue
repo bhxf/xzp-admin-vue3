@@ -1,8 +1,15 @@
 <template>
     <q-dialog v-model="showDialog">
         <q-card class="x-dialog">
-            <q-card-section class="row q-pa-sm items-center bg-primary text-white">
-                <slot name="title" />
+            <q-card-section class="row title q-pa-md items-center">
+                <slot
+                    name="title"
+                    v-bind="{title}"
+                >
+                    <div class="text-h6">
+                        {{ title }}
+                    </div>
+                </slot>
                 <q-space />
                 <q-btn
                     v-close-popup
@@ -13,7 +20,7 @@
                 />
             </q-card-section>
 
-            <q-card-section>
+            <q-card-section class="q-pa-md">
                 <slot />
             </q-card-section>
 
@@ -32,10 +39,12 @@ import { ref, watch } from 'vue';
 
 interface Props {
     modelValue:boolean
+    title:string
 }
 
 const props = withDefaults(defineProps<Props>(), {
     modelValue: false,
+    title: '',
 });
 const emit = defineEmits(['update:modelValue']);
 
@@ -59,10 +68,14 @@ export default {
 <style scoped lang="sass">
 .body--light
     .x-dialog
+        .title
+            background: $grey-2
         .actions
             background: $grey-2
 .body--dark
     .x-dialog
+        .title
+            background: $grey-10
         .actions
-            background: $grey-9
+            background: $grey-10
 </style>

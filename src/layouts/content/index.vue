@@ -2,11 +2,8 @@
     <q-page-container>
         <q-page
             class="layout-page"
-            padding
         >
-            <div
-                class="content rounded-borders shadow-10"
-            >
+            <div>
                 <q-inner-loading
                     :showing="reload"
                     color="primary"
@@ -63,13 +60,13 @@ export default {
     padding-right: v-bind(pagePaddingRight)
 
 .body--light
-    .page
-        background: $grey-2
+    .layout-page
+        background: #f1f5f7
     .content
         background: white
 .body--dark
-    .page
-        background: $grey-9
+    .layout-page
+        background: rgb($dark,0.3)
     .content
         background: $dark
 </style>

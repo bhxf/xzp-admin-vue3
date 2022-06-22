@@ -1,6 +1,8 @@
 <template>
-    <q-header>
-        <div class="layout-header items-center row no-wrap full-width q-gutter-x-sm">
+    <q-header
+        class="layout-header shadow-up-1"
+    >
+        <div class="layout-header-context items-center row no-wrap full-width q-gutter-x-sm">
             <div class="flex col-auto q-gutter-x-md justify-start items-center q-pl-sm">
                 <q-btn
                     rounded
@@ -140,16 +142,22 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.layout-header
+.layout-header-context
     height: v-bind(headerHeight)
 
 .body--dark
     .layout-header
         background-color: $dark
+
+    .layout-header-context
+        background-color: $dark
         color: white
 
 .body--light
     .layout-header
+        background-color: white
+
+    .layout-header-context
         background-color: white
         color: $grey-9
 </style>

@@ -69,7 +69,8 @@ export interface TreeRef {
 }
 export interface TableRef {
   loadData: BaseFunction,
-  addFirst: BaseFunction,
+  addRow: BaseFunction,
+  delRowByKey: BaseFunction,
   setFullscreen: () => void,
   exitFullscreen: () => void,
 }

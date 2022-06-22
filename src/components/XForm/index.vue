@@ -8,7 +8,7 @@
             v-for="field in getFields"
             v-show="field?.hidden !== true"
             :key="field.name"
-            :class="[`col-${field.col||12}`,'q-pr-md flex column']"
+            :class="[`col-${field.col||12}`,'q-pa-xs flex column']"
         >
             <slot
                 :name="field.name"
@@ -65,9 +65,9 @@ const updateObjConfig = (obj:any) => {
 
 const getFields = computed(() => {
     const defaultComponentsProps = {
-        dense: true,
         outlined: false,
         standout: '',
+        stackLabel: true,
         hint: '',
         clearable: true,
     };
@@ -77,6 +77,7 @@ const getFields = computed(() => {
         if (item.required === true) {
             if (!item.componentsProps) item.componentsProps = {};
             item.componentsProps.lazyRules = true;
+            // item.componentsProps.hint = '这是必填的';
         }
         item.componentsProps = { ...defaultComponentsProps, ...item.componentsProps };
 
@@ -110,8 +111,10 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style scoped lang="sass">
 .x-form
-    .q-field__bottom
-        padding: 4px 12px 0 !important
+    ::v-deep(.q-field__bottom)
+        display: none
+    ::v-deep(.q-field--with-bottom)
+        padding-bottom: 0
 </style>

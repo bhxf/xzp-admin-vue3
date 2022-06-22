@@ -1,52 +1,55 @@
 <template>
-    <q-splitter
-        v-model="splitterModel"
-        unit="px"
-    >
-        <template #before>
-            <div
-                class="flex column"
-                :style="getHeight"
-            >
-                <x-tree
-                    v-if="treeData.length>0"
-                    ref="treeRef"
+    <default-content>
+        <q-splitter
+            v-model="splitterModel"
+            unit="px"
+        >
+            <template #before>
+                <div
+                    class="flex column"
+                    :style="getHeight"
+                >
+                    <x-tree
+                        v-if="treeData.length>0"
+                        ref="treeRef"
 
-                    :data-source="treeData"
+                        :data-source="treeData"
 
-                    @lazy-load="onLazyLoad"
+                        @lazy-load="onLazyLoad"
 
-                    @update:selected="updateSelected"
-                    @update:ticked="updateTicked"
+                        @update:selected="updateSelected"
+                        @update:ticked="updateTicked"
+                    />
+                </div>
+            </template>
+
+            <template #after>
+                <x-table
+                    ref="tableRef"
+                    v-model:selected="tableSelected"
+
+                    :load-first="false"
+                    :hide-pagination="true"
+
+                    :height="getHeight"
+                    :columns="fieldConfigColumns"
+
+                    :search="search"
+                    :btn-list="btnList"
+                    :api="getColumn"
+                    :add-row-boj="{keepAlive: true,closeTab:true ,collect: true,sort:0}"
+
+                    edit="row"
+                    row-key="name"
+
+                    :api-after-format="apiAfterFormat"
+
+                    @update-done="updateDone"
+                    @update-del="updateDel"
                 />
-            </div>
-        </template>
-
-        <template #after>
-            <x-table
-                ref="tableRef"
-                v-model:selected="tableSelected"
-
-                :load-first="false"
-                :hide-pagination="true"
-
-                :height="getHeight"
-                :columns="fieldColumns"
-
-                :search="search"
-                :btn-list="btnList"
-                :api="getColumn"
-                :add-row-boj="{keepAlive: true,closeTab:true ,collect: true,sort:0}"
-
-                edit="row"
-                row-key="name"
-                result-key="oldColumns"
-
-                @update-done="updateDone"
-                @update-del="updateDel"
-            />
-        </template>
-    </q-splitter>
+            </template>
+        </q-splitter>
+    </default-content>
 </template>
 
 <script setup lang="ts">
@@ -56,24 +59,24 @@ import XTree from '@/components/XTree/index.vue';
 import { notify } from '@/hooks/message';
 import useLayoutStore from '@/store/settings/layout';
 import {
-    actionConst, actionLoading, actionRef,
+    actionConst, actionRef,
 } from '@/tools/action/curd';
 import { BaseObj } from '@/types';
 import { getColumn, getDB, getTables } from '@/api/codeGeneration/field';
-import { fieldColumns } from '@/views/codeGeneration/fieldConfig/data';
+import { fieldConfigColumns } from '@/views/codeGeneration/fieldConfig/data';
 import { QTreeNode } from 'quasar';
+import DefaultContent from '@/layouts/content/DefaultContent.vue';
 
 const btnList = [
     {
         icon: 'o_add',
         isDisable: () => !treeSelected.value,
         tooltip: '新增一行',
-        onClick: () => tableRef.value?.addFirst(),
+        onClick: () => tableRef.value?.addRow(),
     },
 ];
 const treeData = ref([]);
-const { formRef, tableRef, treeRef } = actionRef();
-const { loadings } = actionLoading('add', 'save');
+const { tableRef, treeRef } = actionRef();
 const {
     search, tableSelected, treeSelected, treeTicked,
 } = actionConst();
@@ -105,6 +108,14 @@ const updateDone = async (row: BaseObj) => {
     row.edit = false;
 };
 const updateDel = async (row: BaseObj) => {
+    tableRef.value?.delRowByKey(row.ID);
+    notify.success('已删除');
+};
+
+const apiAfterFormat = (result:any) => {
+    const columns = JSON.parse(result.columns || '[]');
+    if (columns.length > 0) return columns;
+    return result.oldColumns;
 };
 
 loadTreeData();

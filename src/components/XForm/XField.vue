@@ -7,16 +7,6 @@
         :label="label"
         :required="required"
     >
-        <template
-            v-if="required === true"
-            #append
-        >
-            <q-icon
-                size="xs"
-                name="r_star_border"
-                color="red"
-            />
-        </template>
     </component>
 </template>
 

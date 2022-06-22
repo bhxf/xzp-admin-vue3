@@ -1,140 +1,150 @@
 import {
-    formatChip, formatIcon, formatLinkBtn,
+    formatChip,
 } from '@/tools/format';
 import { Column, ValidateError } from '@/components';
 
-export const fieldColumns:Column[] = [
+const validateName = (val: number, err: ValidateError) => {
+    if (!val) {
+        err.error = true;
+        err.errorMessage = '请输入菜单名称';
+        return false;
+    }
+    err.error = false;
+    err.errorMessage = '';
+    return true;
+};
+
+export const fieldConfigColumns:Column[] = [
+    { name: 'dataLen', label: '字段长度', show: false },
+    { name: 'dataType', label: '数据类型', show: false },
     {
-        name: 'title',
-        label: '菜单名称',
+        name: 'dataPrimary', label: '是否主键', format: (value) => formatChip(value, 'PRI'), show: false,
+    },
+    {
+        name: 'dataRequired', label: '是否必填', format: (value) => formatChip(value, 'YES'), show: false,
+    },
+    {
+        name: 'dataField',
+        label: '字段名称',
+        width: 180,
+        edit: true,
+        required: true,
+        components: 'input',
+        componentsProps: {
+            validate: validateName,
+        },
+    },
+    {
+        name: 'dataDes',
+        label: '字段描述',
         width: 200,
         edit: true,
         required: true,
         components: 'input',
         componentsProps: {
-            validate: (val: number, err: ValidateError) => {
-                if (!val) {
-                    err.error = true;
-                    err.errorMessage = '请输入菜单名称';
-                    return false;
-                }
-                err.error = false;
-                err.errorMessage = '';
-                return true;
-            },
-        },
-        format: (value) => formatLinkBtn(value),
-    },
-    {
-        name: 'icon',
-        label: '图标',
-        width: 200,
-        edit: true,
-        components: 'icon',
-        format: (value) => formatIcon(value),
-    },
-    {
-        name: 'path',
-        label: '路由地址',
-        width: 200,
-        required: true,
-        edit: true,
-        components: 'input',
-        componentsProps: {
-            validate: (val: number, err: any) => {
-                if (!val) {
-                    err.error = true;
-                    err.errorMessage = '请输入路由地址';
-                    return false;
-                }
-                err.error = false;
-                err.errorMessage = '';
-                return true;
-            },
+            validate: validateName,
         },
     },
     {
-        name: 'component',
-        label: '组件地址',
-        width: 200,
-        required: true,
-        edit: true,
-        components: 'input',
-        componentsProps: {
-            validate: (val: number, err: any) => {
-                if (!val) {
-                    err.error = true;
-                    err.errorMessage = '请输入组件地址';
-                    return false;
-                }
-                err.error = false;
-                err.errorMessage = '';
-                return true;
-            },
-        },
-    },
-    {
-        name: 'name',
-        label: '组件名称',
-        width: 200,
+        name: 'goField',
+        label: 'go字段',
+        width: 180,
         edit: true,
         required: true,
         components: 'input',
         componentsProps: {
-            validate: (val: number, err: any) => {
-                if (!val) {
-                    err.error = true;
-                    err.errorMessage = '请输入组件名称';
-                    return false;
-                }
-                err.error = false;
-                err.errorMessage = '';
-                return true;
-            },
+            validate: validateName,
         },
     },
     {
-        name: 'sort',
-        label: '排序',
-        width: 150,
+        name: 'goType',
+        label: 'go类型',
+        width: 180,
         edit: true,
-        defaultValue: 0,
+        required: true,
+        components: 'select',
+        componentsProps: {
+            validate: validateName,
+        },
+    },
+    {
+        name: 'formField',
+        label: '表单字段',
+        width: 180,
+        edit: true,
+        required: true,
         components: 'input',
         componentsProps: {
-            type: 'number',
+            validate: validateName,
         },
     },
     {
-        name: 'keepAlive',
-        label: '是否缓存',
-        width: 80,
-        align: 'center',
-        required: true,
+        name: 'formType',
+        label: '表单类型',
+        width: 180,
         edit: true,
-        defaultValue: true,
+        required: true,
+        components: 'select',
+        componentsProps: {
+            validate: validateName,
+        },
+    },
+    {
+        name: 'formRequired',
+        label: '表单是否必填',
+        width: 100,
+        edit: true,
+        required: true,
         components: 'toggle',
+        componentsProps: {
+            validate: validateName,
+        },
         format: (value) => formatChip(value),
     },
     {
-        name: 'collect',
-        label: '是否收藏',
-        width: 80,
-        align: 'center',
-        required: true,
+        name: 'formShow',
+        label: '表单是否显示',
+        width: 100,
         edit: true,
-        defaultValue: true,
+        required: true,
         components: 'toggle',
+        componentsProps: {
+            validate: validateName,
+        },
         format: (value) => formatChip(value),
     },
     {
-        name: 'closeTab',
-        label: '是否关闭',
-        width: 80,
-        align: 'center',
-        required: true,
+        name: 'goToJsonName',
+        label: '列表字段',
+        width: 180,
         edit: true,
-        defaultValue: true,
+        required: true,
+        components: 'input',
+        componentsProps: {
+            validate: validateName,
+        },
+    },
+    {
+        name: 'listType',
+        label: '列表类型',
+        width: 180,
+        edit: true,
+        required: true,
+        components: 'select',
+        componentsProps: {
+            validate: validateName,
+        },
+    },
+    {
+        name: 'listShow',
+        label: '列表是否显示',
+        width: 100,
+        edit: true,
+        required: true,
         components: 'toggle',
+        componentsProps: {
+            validate: validateName,
+        },
         format: (value) => formatChip(value),
     },
 ];

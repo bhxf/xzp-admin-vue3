@@ -1,18 +1,20 @@
 <template>
-    <x-table
-        ref="tableRef"
-        v-model:selected="tableSelected"
+    <default-content>
+        <x-table
+            ref="tableRef"
+            v-model:selected="tableSelected"
 
-        edit="row"
+            edit="row"
 
-        :api="getApiList"
-        :btn-list="btnList"
-        :height="getHeight"
-        :columns="apiColumns"
+            :api="getApiList"
+            :btn-list="btnList"
+            :height="getHeight"
+            :columns="apiColumns"
 
-        @update-done="updateDone"
-        @update-del="updateDel"
-    />
+            @update-done="updateDone"
+            @update-del="updateDel"
+        />
+    </default-content>
 </template>
 
 <script setup lang="ts">
@@ -28,6 +30,7 @@ import { actionConst, actionRef } from '@/tools/action/curd';
 import { dialog, notify } from '@/hooks/message';
 import { BtnGroup } from '@/components';
 import { BaseObj } from '@/types';
+import DefaultContent from '@/layouts/content/DefaultContent.vue';
 
 const { tableRef } = actionRef();
 const {
@@ -38,7 +41,7 @@ const btnList:BtnGroup[] = [
         icon: 'o_add',
         tooltip: '新增一行',
         key: 'add',
-        onClick: () => tableRef.value?.addFirst(),
+        onClick: () => tableRef.value?.addRow(),
     },
     {
         icon: 'o_delete',

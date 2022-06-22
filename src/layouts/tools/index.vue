@@ -7,7 +7,7 @@
     >
         <div
             style="border-radius: 5px 0 0 5px;"
-            class="layout-tools column full-height justify-start items-center q-gutter-y-md shadow-5"
+            class="layout-tools column full-height justify-start items-center q-gutter-y-md"
         >
             <q-btn
                 color="blue"

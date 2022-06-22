@@ -1,6 +1,6 @@
 <template>
     <div class="flex column col q-gutter-y-xs">
-        <div class="tools flex column col-auto q-gutter-y-xs">
+        <div class="tools flex column col-auto q-gutter-y-xs q-pb-sm shadow-up-1">
             <div class="q-pl-sm q-pr-sm q-pt-xs row item items-center">
                 <slot
                     name="tools"

@@ -1,8 +1,8 @@
 <template>
     <q-page-sticky
-        position="top"
         expand
-        class="shadow-5"
+        position="top"
+        class="shadow-up-5"
     >
         <q-toolbar class="nav-tabs q-pa-none">
             <div class="row no-wrap full-width items-center">
@@ -23,27 +23,25 @@
                             :key="navTab.path"
                             class="tab"
                             :name="navTab.path"
-                            content-class="q-gutter-x-sm"
+                            content-class="q-gutter-x-xs"
                         >
                             <q-icon
-                                size="18px"
-                                :name="navTab?.meta?.icon||'lightbulb'"
+                                size="sm"
+                                :name="navTab?.meta?.icon||'r_lightbulb'"
                             />
                             <div class="text-caption">
                                 {{ navTab?.meta?.title }}
                             </div>
                             <q-btn
                                 v-if="navTab?.meta?.closeTab !== false"
-                                color="red"
                                 flat
                                 round
                                 dense
-                                size="xs"
+                                size="sm"
                                 @click.stop="closeNavTab(navTab.path)"
                             >
                                 <q-icon
-                                    name="close"
-                                    color="deep-orange"
+                                    name="r_close"
                                 />
                             </q-btn>
                             <q-menu
@@ -108,7 +106,6 @@
                 </div>
                 <div class="col-auto flex justify-start items-center q-gutter-x-xs q-pr-md">
                     <q-btn
-                        color="primary"
                         round
                         flat
                         dense
@@ -119,7 +116,6 @@
                         </q-tooltip>
                     </q-btn>
                     <q-btn
-                        color="primary"
                         icon="r_menu"
                         round
                         flat
@@ -132,7 +128,6 @@
                     </q-btn>
                     <q-btn
                         :loading="navTabStore.reload"
-                        color="primary"
                         icon="r_refresh"
                         round
                         flat
@@ -181,7 +176,7 @@ export default {
 <style scoped lang="sass">
 .nav-tabs
     ::v-deep(.q-tab__indicator)
-        height: 3px !important
+        height: 4px !important
 
     min-height: v-bind(navHeight)
 
@@ -193,22 +188,22 @@ export default {
 
 .body--light
     .nav-tabs
-        background-color: $grey-2
+        background-color: $grey-1
 
         .active
             color: $primary
-            background-color: white
+            background-color: rgb($primary,0.1)
 
         .tabs
             color: $grey-9
 
 .body--dark
     .nav-tabs
-        background-color: $dark
+        background-color: $grey-10
 
         .active
             color: white
-            background-color: rgba($primary, 0.1)
+            background-color:  rgb($primary,0.1)
 
         .tabs
             color: white

@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@quasar/extras': ^1.13.5
+  '@quasar/extras': ^1.14.1
   '@quasar/vite-plugin': ^1.0.9
   '@soerenmartius/vue3-clipboard': ^0.1.2
   '@types/codemirror': ^5.60.5
@@ -15,6 +15,7 @@ specifiers:
   axios: ^0.27.2
   codemirror: ^6.0.0
   codemirror-editor-vue3: ^2.1.7
+  echarts: ^5.3.3
   eslint: ^7.32.0 || ^8.2.0
   eslint-config-airbnb-base: ^15.0.0
   eslint-config-prettier: ^8.5.0
@@ -26,7 +27,7 @@ specifiers:
   monaco-editor: ^0.33.0
   particles.vue3: ^2.1.0
   pinia: ^2.0.0-rc.10
-  quasar: ^2.6.6
+  quasar: ^2.7.3
   sass: 1.32.0
   tsparticles: ^2.1.0
   typescript: ^4.5.4
@@ -37,24 +38,25 @@ specifiers:
   vue-tsc: ^0.29.8
 
 dependencies:
-  '@quasar/extras': registry.npmjs.org/@quasar/extras/1.13.5
+  '@quasar/extras': registry.npmjs.org/@quasar/extras/1.14.1
   '@soerenmartius/vue3-clipboard': registry.npmjs.org/@soerenmartius/vue3-clipboard/0.1.2
   '@vue/eslint-config-typescript': registry.npmjs.org/@vue/eslint-config-typescript/10.0.0_f8e96dede1cc5c7c63e4accb77511c19
   axios: registry.npmjs.org/axios/0.27.2
   codemirror: registry.npmjs.org/codemirror/6.0.0
   codemirror-editor-vue3: registry.npmjs.org/codemirror-editor-vue3/2.1.7
+  echarts: registry.npmjs.org/echarts/5.3.3
   lodash-es: registry.npmjs.org/lodash-es/4.17.21
   lodash-unified: registry.npmjs.org/lodash-unified/1.0.2_f567d1d3c0c6a67669f03af7a1aa4dad
   monaco-editor: registry.npmjs.org/monaco-editor/0.33.0
   particles.vue3: registry.npmjs.org/particles.vue3/2.1.0
   pinia: registry.npmjs.org/pinia/2.0.0-rc.10_typescript@4.6.3+vue@3.2.30
-  quasar: registry.npmjs.org/quasar/2.6.6
+  quasar: registry.npmjs.org/quasar/2.7.3
   uuid: registry.npmjs.org/uuid/8.3.2
   vue: registry.npmjs.org/vue/3.2.30
   vue-router: registry.npmjs.org/vue-router/4.0.14_vue@3.2.30
 
 devDependencies:
-  '@quasar/vite-plugin': registry.npmjs.org/@quasar/vite-plugin/1.0.9_42f37e3269958d624770d5ef925be291
+  '@quasar/vite-plugin': registry.npmjs.org/@quasar/vite-plugin/1.0.9_66ec483a88ee9e21a5f886e7b0bae2da
   '@types/codemirror': registry.npmjs.org/@types/codemirror/5.60.5
   '@types/lodash-es': registry.npmjs.org/@types/lodash-es/4.17.6
   '@types/node': registry.npmjs.org/@types/node/17.0.25
@@ -277,13 +279,13 @@ packages:
       '@nodelib/fs.scandir': registry.npmjs.org/@nodelib/fs.scandir/2.1.5
       fastq: registry.npmjs.org/fastq/1.13.0
 
-  registry.npmjs.org/@quasar/extras/1.13.5:
-    resolution: {integrity: sha512-H4X3jwqOJpDrn1Pof1mJIpoHdBrZQSR9ZpnQ7RCkJsJccpTyQzs8Q6ehVXfIZrco2kd3UPitRQqEiW7k45ckLg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@quasar/extras/-/extras-1.13.5.tgz}
+  registry.npmjs.org/@quasar/extras/1.14.1:
+    resolution: {integrity: sha512-e8l3LCXVd13HqVDgiLpLP+D+aNpISASnzXXnQhtsAhFjp9VDL5xnwB6BOcvrmMe2LFRjleYdsD9Nrd+MiJiiDA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@quasar/extras/-/extras-1.14.1.tgz}
     name: '@quasar/extras'
-    version: 1.13.5
+    version: 1.14.1
     dev: false
 
-  registry.npmjs.org/@quasar/vite-plugin/1.0.9_42f37e3269958d624770d5ef925be291:
+  registry.npmjs.org/@quasar/vite-plugin/1.0.9_66ec483a88ee9e21a5f886e7b0bae2da:
     resolution: {integrity: sha512-i3tOXLu9SvBG/u/VH/vlPpwzU3QHVtogoSl23Y3i9Clgo6XCtm9mHB0XnQvsLQgNfUTkAKJPKnGwAPQd9uBu1A==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@quasar/vite-plugin/-/vite-plugin-1.0.9.tgz}
     id: registry.npmjs.org/@quasar/vite-plugin/1.0.9
     name: '@quasar/vite-plugin'
@@ -294,7 +296,7 @@ packages:
       vite: ^2.0.0
       vue: ^3.0.0
     dependencies:
-      quasar: registry.npmjs.org/quasar/2.6.6
+      quasar: registry.npmjs.org/quasar/2.7.3
       vite: registry.npmjs.org/vite/2.9.5_sass@1.32.0
       vue: registry.npmjs.org/vue/3.2.30
     dev: true
@@ -1330,6 +1332,15 @@ packages:
       domelementtype: registry.npmjs.org/domelementtype/2.3.0
       domhandler: registry.npmjs.org/domhandler/4.3.1
     dev: true
+
+  registry.npmjs.org/echarts/5.3.3:
+    resolution: {integrity: sha512-BRw2serInRwO5SIwRviZ6Xgm5Lb7irgz+sLiFMmy/HOaf4SQ+7oYqxKzRHAKp4xHQ05AuHw1xvoQWJjDQq/FGw==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/echarts/-/echarts-5.3.3.tgz}
+    name: echarts
+    version: 5.3.3
+    dependencies:
+      tslib: registry.npmjs.org/tslib/2.3.0
+      zrender: registry.npmjs.org/zrender/5.3.2
+    dev: false
 
   registry.npmjs.org/emmet/2.3.6:
     resolution: {integrity: sha512-pLS4PBPDdxuUAmw7Me7+TcHbykTsBKN/S9XJbUOMFQrNv9MoshzyMFK/R57JBm94/6HSL4vHnDeEmxlC82NQ4A==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/emmet/-/emmet-2.3.6.tgz}
@@ -2945,10 +2956,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  registry.npmjs.org/quasar/2.6.6:
-    resolution: {integrity: sha512-rXoGZROOXVutQX14l/ys0te/NrgQ754krI0Vz52pBXdznyS+dTL6AgGpr3JMwffoxpxhQyedrL2jOAMpq+Jsgw==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/quasar/-/quasar-2.6.6.tgz}
+  registry.npmjs.org/quasar/2.7.3:
+    resolution: {integrity: sha512-4YQQP1FbfshXwav9QcOHpvSg4eME4iKzd85m4562EqcfuhRtycC/2WQg+cRxlEr43gEHM0uXaJmybNUWZpoYkw==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/quasar/-/quasar-2.7.3.tgz}
     name: quasar
-    version: 2.6.6
+    version: 2.7.3
     engines: {node: '>= 10.18.1', npm: '>= 6.13.4', yarn: '>= 1.21.1'}
     dev: false
 
@@ -3234,6 +3245,12 @@ packages:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz}
     name: tslib
     version: 1.14.1
+
+  registry.npmjs.org/tslib/2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/tslib/-/tslib-2.3.0.tgz}
+    name: tslib
+    version: 2.3.0
+    dev: false
 
   registry.npmjs.org/tsparticles-engine/2.1.0:
     resolution: {integrity: sha512-hzqdFa1YXbmVxb5XXZd17OXLSjuH871Q9M//iOtPmyGe7nMgOxdAVCgF3/69KYCtQrMQFlulZdstIzya0lu5Yg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/tsparticles-engine/-/tsparticles-engine-2.1.0.tgz}
@@ -4027,3 +4044,11 @@ packages:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz}
     name: yallist
     version: 4.0.0
+
+  registry.npmjs.org/zrender/5.3.2:
+    resolution: {integrity: sha512-8IiYdfwHj2rx0UeIGZGGU4WEVSDEdeVCaIg/fomejg1Xu6OifAL1GVzIPHg2D+MyUkbNgPWji90t0a8IDk+39w==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/zrender/-/zrender-5.3.2.tgz}
+    name: zrender
+    version: 5.3.2
+    dependencies:
+      tslib: registry.npmjs.org/tslib/2.3.0
+    dev: false

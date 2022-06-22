@@ -1,116 +1,113 @@
 <template>
-    <q-splitter
-        v-model="splitterModel"
-        unit="px"
-    >
-        <template #before>
-            <div
-                class="flex column"
-                :style="getHeight"
-            >
-                <x-tree
-                    ref="treeRef"
-
-                    :api="getMenuList"
-
-                    result-key="list"
-                    node-key="ID"
-                    label-key="meta.title"
-
-                    @update:selected="updateSelected"
-                    @update:ticked="updateTicked"
+    <default-content>
+        <q-splitter
+            v-model="splitterModel"
+            unit="px"
+        >
+            <template #before>
+                <div
+                    class="flex column"
+                    :style="getHeight"
                 >
-                    <template #tools>
+                    <x-tree
+                        ref="treeRef"
+
+                        :api="getMenuList"
+
+                        result-key="list"
+                        node-key="ID"
+                        label-key="meta.title"
+
+                        @update:selected="updateSelected"
+                        @update:ticked="updateTicked"
+                    >
+                        <template #tools>
+                            <q-btn
+                                flat
+                                dense
+                                round
+                                color="primary"
+                                icon="o_add"
+                                @click="onAdd"
+                            />
+                            <q-btn
+                                :disable="isEdit"
+                                flat
+                                dense
+                                round
+                                icon="o_edit"
+                                color="orange"
+                                @click="onEdit"
+                            />
+                            <q-btn
+                                :disable="isDel"
+                                flat
+                                dense
+                                round
+                                icon="o_delete"
+                                color="red"
+                                @click="onDel"
+                            />
+                        </template>
+                        <template #default-header="prop">
+                            <div class="row items-center">
+                                <div>{{ prop.node.meta?.title }}</div>
+                            </div>
+                        </template>
+                    </x-tree>
+                </div>
+
+                <!--新增菜单-->
+                <x-dialog :title="getTitle" v-model="loadings['add']">
+                    <x-form
+                        ref="formRef"
+                        :fields="initMenuForm"
+                    />
+                    <template #actions>
                         <q-btn
-                            flat
-                            dense
-                            round
+                            :loading="loadings['save']"
                             color="primary"
-                            icon="o_add"
-                            @click="onAdd"
+                            unelevated
+                            label="保存"
+                            @click="onSave"
                         />
                         <q-btn
-                            :disable="isEdit"
+                            v-close-popup
                             flat
-                            dense
-                            round
-                            icon="o_edit"
-                            color="orange"
-                            @click="onEdit"
-                        />
-                        <q-btn
-                            :disable="isDel"
-                            flat
-                            dense
-                            round
-                            icon="o_delete"
-                            color="red"
-                            @click="onDel"
+                            label="取消"
                         />
                     </template>
-                    <template #default-header="prop">
-                        <div class="row items-center">
-                            <div>{{ prop.node.meta?.title }}</div>
-                        </div>
-                    </template>
-                </x-tree>
-            </div>
+                </x-dialog>
+            </template>
 
-            <!--新增菜单-->
-            <x-dialog v-model="loadings['add']">
-                <template #title>
-                    <div class="text-h6">
-                        {{ getTitle }}
-                    </div>
-                </template>
-                <x-form
-                    ref="formRef"
-                    :fields="initMenuForm"
+            <template #after>
+                <x-table
+                    ref="tableRef"
+                    v-model:selected="tableSelected"
+
+                    :load-first="false"
+                    :hide-pagination="true"
+
+                    :height="getHeight"
+                    :columns="menuColumns"
+
+                    :search="search"
+                    :btn-list="btnList"
+                    :search-list="searchList"
+                    :after-format="afterFormat"
+                    :api="getBaseMenuByParentId"
+                    :add-row-boj="{keepAlive: true,closeTab:true ,collect: true,sort:0}"
+
+                    edit="row"
+                    row-key="name"
+                    result-key="menus"
+
+                    @update-done="updateDone"
+                    @update-del="updateDel"
                 />
-                <template #actions>
-                    <q-btn
-                        :loading="loadings['save']"
-                        color="primary"
-                        unelevated
-                        label="保存"
-                        @click="onSave"
-                    />
-                    <q-btn
-                        v-close-popup
-                        flat
-                        label="取消"
-                    />
-                </template>
-            </x-dialog>
-        </template>
-
-        <template #after>
-            <x-table
-                ref="tableRef"
-                v-model:selected="tableSelected"
-
-                :load-first="false"
-                :hide-pagination="true"
-
-                :height="getHeight"
-                :columns="menuColumns"
-
-                :search="search"
-                :btn-list="btnList"
-                :search-list="searchList"
-                :after-format="afterFormat"
-                :api="getBaseMenuByParentId"
-                :add-row-boj="{keepAlive: true,closeTab:true ,collect: true,sort:0}"
-
-                edit="row"
-                row-key="name"
-                result-key="menus"
-
-                @update-done="updateDone"
-                @update-del="updateDel"
-            />
-        </template>
-    </q-splitter>
+            </template>
+        </q-splitter>
+    </default-content>
 </template>
 
 <script setup lang="ts">
@@ -131,13 +128,14 @@ import {
 import { SearchColumn } from '@/components';
 import { BaseObj } from '@/types';
 import { clone } from 'lodash-es';
+import DefaultContent from '@/layouts/content/DefaultContent.vue';
 
 const btnList = [
     {
         icon: 'o_add',
         isDisable: () => !treeSelected.value,
         tooltip: '新增一行',
-        onClick: () => tableRef.value?.addFirst(),
+        onClick: () => tableRef.value?.addRow(),
     },
 ];
 const { action, getTitle } = actionTitle('角色');

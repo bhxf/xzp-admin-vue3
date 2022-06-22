@@ -18,6 +18,8 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+    loading.base('菜单加载中，请稍等...');
+
     const navStore = useNavTabStore();
 
     navStore.updateCurrentNavTabsByPath(to.path);
@@ -42,7 +44,6 @@ router.beforeEach(async (to, from, next) => {
     // 加载菜单
     if (!navStore.isLoadMenu) {
         try {
-            loading.base('菜单加载中，请稍等...');
             await navStore.getMenuByUser();
             navStore.isLoadMenu = true;
             next({ ...to, replace: true });
@@ -50,11 +51,13 @@ router.beforeEach(async (to, from, next) => {
             next({ path: 'error' });
         } finally {
             navStore.isLoadMenu = true;
-            loading.hide();
         }
     } else {
         next();
     }
+});
+router.afterEach(() => {
+    loading.hide();
 });
 
 export function setupRouter(app: any) {

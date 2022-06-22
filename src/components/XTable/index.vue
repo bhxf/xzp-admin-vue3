@@ -1,7 +1,7 @@
 <template>
     <div
         :style="height"
-        class="flex column no-wrap q-pt-xs"
+        class="flex column no-wrap q-pa-xs"
     >
         <div class="col-auto flex column q-pa-xs q-gutter-y-xs">
             <div class="tools flex full-width items-center q-gutter-x-sm">
@@ -77,10 +77,10 @@
             <div class="full-width flex row q-gutter-x-xs" />
         </div>
         <q-table
-            flat
             ref="tableRef"
             v-bind="$attrs"
             v-model:pagination="pagination"
+            flat
 
             class="x-table col"
             :hide-pagination="hidePagination"
@@ -278,6 +278,7 @@ import { clone } from 'lodash-es';
 interface XTableProps {
     api?: (search: any) => any,
     afterFormat?: BaseFunctionReturn,
+    apiAfterFormat?: BaseFunctionReturn,
     search?: any,
     addRowBoj?: any,
     resultKey?: string,
@@ -300,6 +301,7 @@ interface XTableProps {
 const props = withDefaults(defineProps<XTableProps>(), {
     api: undefined,
     afterFormat: undefined,
+    apiAfterFormat: undefined,
     height: undefined,
     btnList: () => [],
     columns: () => [],
@@ -380,7 +382,7 @@ const validate = (row: any, cols: any) => {
     });
 };
 const loadData = async (params: any = {}) => {
-    let list = [];
+    let list: any[];
     if (typeof props.api === 'function') {
         loading.value = true;
         query.value = Object.assign(query.value, params);
@@ -393,16 +395,8 @@ const loadData = async (params: any = {}) => {
             pagination.value.rowsNumber = result[props.resultPage.rowsNumber];
         }
 
-        if (!props.hideSerialNumber) {
-            list = result[props.resultKey].filter((item: any, index: number) => {
-                if (props.hidePagination) {
-                    item.serialNumber = (index + 1);
-                } else {
-                    item.serialNumber = ((query.value.page - 1) * query.value.pageSize)
-                        + (index + 1);
-                }
-                return item;
-            });
+        if (typeof props.apiAfterFormat === 'function') {
+            list = props.apiAfterFormat(result);
         } else {
             list = result[props.resultKey];
         }
@@ -418,17 +412,34 @@ const loadData = async (params: any = {}) => {
 const afterFormat = (list:any[]) => {
     let newList:any[] = list;
     if (typeof props.afterFormat === 'function') {
-        newList = props.afterFormat(list);
+        newList = props.afterFormat(newList);
     }
+
+    if (!props.hideSerialNumber) {
+        newList = newList.filter((item: any, index: number) => {
+            if (props.hidePagination) {
+                item.serialNumber = (index + 1);
+            } else {
+                item.serialNumber = ((query.value.page - 1) * query.value.pageSize)
+                    + (index + 1);
+            }
+            return item;
+        });
+    }
+
     return newList;
 };
 
-const addFirst = (row:any = {}) => {
+const addRow = (row:any = {}) => {
     const newRow:any = Object.assign(row, props.addRowBoj);
     newRow.edit = true;
     newRow.editType = 'add';
     newRow[props.rowKey] = v4();
     dataSource.value.unshift(Object.assign(newRow, row));
+};
+const delRowByKey = (key:any) => {
+    const index = dataSource.value.findIndex((item) => item[props.rowKey] === key);
+    dataSource.value.splice(index, 1);
 };
 
 const onDel = ({ row }: any) => {
@@ -533,7 +544,7 @@ const init = () => {
 init();
 
 provide('newColumns', newColumns);
-defineExpose({ loadData, addFirst });
+defineExpose({ loadData, addRow, delRowByKey });
 
 </script>
 

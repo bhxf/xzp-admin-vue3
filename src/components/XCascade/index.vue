@@ -2,7 +2,7 @@
     <q-menu
         v-bind="$attrs"
         fit
-        class="shadow-10"
+        class="shadow-5"
     >
         <q-list padding>
             <q-item
