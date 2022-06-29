@@ -1,7 +1,7 @@
 <template>
-    <div class="flex column col q-gutter-y-xs">
-        <div class="tools flex column col-auto q-gutter-y-xs q-pb-sm shadow-up-1">
-            <div class="q-pl-sm q-pr-sm q-pt-xs row item items-center">
+    <div class="flex column col">
+        <div class="tools flex column col-auto">
+            <div class="row q-pa-xs item items-center justify-start">
                 <slot
                     name="tools"
                     v-bind="{ticked,selected,expanded}"
@@ -10,9 +10,7 @@
                 <q-btn
                     flat
                     dense
-                    rounded
                     color="primary"
-                    round
                     icon="r_expand"
                     @click="onExpandAll"
                 >
@@ -23,9 +21,7 @@
                 <q-btn
                     flat
                     dense
-                    rounded
                     color="primary"
-                    round
                     icon="r_vertical_align_center"
                     @click="onCollapseAll"
                 >
@@ -37,9 +33,7 @@
                     <q-btn
                         flat
                         dense
-                        rounded
                         color="primary"
-                        round
                         icon="refresh"
                         @click="loadData"
                     >
@@ -49,10 +43,11 @@
                     </q-btn>
                 </slot>
             </div>
-            <div class="q-pl-md q-pr-md row no-wrap items-center q-gutter-x-xs">
+
+            <div class="search q-pr-sm q-pl-sm row items-center">
                 <q-input
                     v-model="filter"
-                    standout
+                    borderless
                     dense
                     class="full-width"
                     placeholder="请输入关键字"
@@ -70,7 +65,7 @@
             >
                 <q-spinner-ios
                     color="primary"
-                    size="2em"
+                    size="3em"
                 />
             </div>
             <q-tree
@@ -198,11 +193,16 @@ export default {
 </script>
 
 <style scoped lang="sass">
+
 .body--light
+    .search
+        background: $grey-1
     .tools
         background: white
 
 .body--dark
     .tools
         background: $dark
+    .search
+        background: $grey-9
 </style>

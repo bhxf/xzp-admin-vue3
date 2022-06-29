@@ -11,4 +11,4 @@ export const formatChip = (value:any, yes:any = true) => {
         color, outline: true, size: 'sm', label: text,
     });
 };
-export const formatIcon = (value: string) => h(QIcon, { name: value, size: 'sm', color: 'primary' });
+export const formatIcon = (value: string) => h(QIcon, { name: value, size: 'sm' });

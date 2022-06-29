@@ -1,89 +1,94 @@
 <template>
     <default-content>
-        <q-splitter
-            v-model="splitterModel"
-            unit="px"
-        >
-            <template #before>
-                <!--树组件-->
-                <div
-                    class="flex column"
-                    :style="getHeight"
-                >
-                    <x-tree
-                        ref="treeRef"
-                        :api="getAuthorityList"
-                        result-key="list"
-                        node-key="authorityId"
-                        label-key="authorityName"
-
-                        @update:selected="updateSelected"
-                        @update:ticked="updateTicked"
+        <template #default="prop">
+            <q-splitter
+                v-model="splitterModel"
+                unit="px"
+            >
+                <template #before>
+                    <!--树组件-->
+                    <div
+                        class="flex column"
+                        :style="{height:prop.pageHeight}"
                     >
-                        <template #tools>
-                            <q-btn
-                                flat
-                                dense
-                                round
-                                color="primary"
-                                icon="o_add"
-                                @click="onAdd"
-                            />
-                            <q-btn
-                                :disable="isDel"
-                                flat
-                                dense
-                                round
-                                icon="o_delete"
-                                color="red"
-                                @click="onDel"
-                            />
-                        </template>
-                        <template #default-header="prop">
-                            <div class="flex column justify-start">
-                                <div class="text-weight-bold text-caption">
-                                    {{ prop.node.authorityName }}
+                        <x-tree
+                            ref="treeRef"
+                            :api="getAuthorityList"
+                            result-key="list"
+                            node-key="authorityId"
+                            label-key="authorityName"
+
+                            @update:selected="updateSelected"
+                            @update:ticked="updateTicked"
+                        >
+                            <template #tools>
+                                <q-btn
+                                    flat
+                                    dense
+                                    round
+                                    color="primary"
+                                    icon="o_add"
+                                    @click="onAdd"
+                                />
+                                <q-btn
+                                    :disable="isDel"
+                                    flat
+                                    dense
+                                    round
+                                    icon="o_delete"
+                                    color="red"
+                                    @click="onDel"
+                                />
+                            </template>
+                            <template #default-header="prop">
+                                <div class="flex column justify-start">
+                                    <div class="text-weight-bold text-caption">
+                                        {{ prop.node.authorityName }}
+                                    </div>
+                                    <div class="text-caption">
+                                        {{ prop.node.authorityId }}
+                                    </div>
                                 </div>
-                                <div class="text-caption">
-                                    {{ prop.node.authorityId }}
-                                </div>
+                            </template>
+                        </x-tree>
+                    </div>
+
+                    <!--新增-->
+                    <x-dialog v-model="loadings['add']">
+                        <template #title>
+                            <div class="text-h6">
+                                {{ getTitle }}角色
                             </div>
                         </template>
-                    </x-tree>
-                </div>
+                        <x-form
+                            ref="formRef"
+                            :fields="initRoleForm"
+                        />
+                        <template #actions>
+                            <q-btn
+                                :loading="loadings['save']"
+                                color="primary"
+                                label="保存"
+                                @click="onSave"
+                            />
+                            <q-btn
+                                v-close-popup
+                                flat
+                                label="取消"
+                                color="primary"
+                            />
+                        </template>
+                    </x-dialog>
+                </template>
 
-                <!--新增-->
-                <x-dialog v-model="loadings['add']">
-                    <template #title>
-                        <div class="text-h6">
-                            {{ getTitle }}角色
-                        </div>
-                    </template>
-                    <x-form
-                        ref="formRef"
-                        :fields="initRoleForm"
+                <template #after>
+                    <RoleDetail
+                        ref="detailRef"
+                        :style="{height: prop.pageHeight}"
                     />
-                    <template #actions>
-                        <q-btn
-                            :loading="loadings['save']"
-                            color="primary"
-                            label="保存"
-                            @click="onSave"
-                        />
-                        <q-btn
-                            v-close-popup
-                            flat
-                            label="取消"
-                            color="primary"
-                        />
-                    </template>
-                </x-dialog>
-            </template>
-
-            <template #after>
-                <RoleDetail :style="getHeight" ref="detailRef" />
-            </template>
-        </q-splitter>
+                </template>
+            </q-splitter>
+        </template>
     </default-content>
 </template>
 
@@ -102,7 +107,6 @@ import {
     actionCondition, actionConst, actionLoading, actionRef, actionTitle,
 } from '@/tools/action/curd';
 import RoleDetail from '@/views/admin/role/detail.vue';
-import useLayoutStore from '@/store/settings/layout';
 import DefaultContent from '@/layouts/content/DefaultContent.vue';
 
 const { action, getTitle } = actionTitle('角色');
@@ -164,7 +168,6 @@ const initRoleForm = computed(() => {
     return roleForm;
 });
 const splitterModel = ref(250);
-const getHeight = computed(() => ({ height: useLayoutStore().getPageHeight }));
 
 </script>
 <script lang="ts">

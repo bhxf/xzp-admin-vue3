@@ -162,28 +162,4 @@ export const fieldConfigColumns:Column[] = [
         },
         format: (value) => formatChip(value),
     },
-    {
-        name: 'listSort',
-        label: '列表是否排序',
-        width: 100,
-        edit: true,
-        required: true,
-        components: 'toggle',
-        componentsProps: {
-            validate: validateName,
-        },
-        format: (value) => formatChip(value),
-    },
-    {
-        name: 'listQuery',
-        label: '列表是否查询',
-        width: 100,
-        edit: true,
-        required: true,
-        components: 'toggle',
-        componentsProps: {
-            validate: validateName,
-        },
-        format: (value) => formatChip(value),
-    },
 ];

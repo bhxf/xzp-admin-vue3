@@ -1,18 +1,28 @@
 <template>
-    <div class="flex column col q-gutter-y-xs">
-        <div class="tools flex column col-auto q-gutter-y-xs">
-            <div class="q-pl-sm q-pr-sm q-pt-xs">
+    <div class="flex column col">
+        <div class="tools flex column col-auto">
+            <div class="row q-pa-xs q-gutter-x-xs items-center justify-start">
                 <slot
                     name="tools"
                     v-bind="{ticked,selected}"
                 />
+
+                <q-space />
+
+                <q-btn
+                    color="primary"
+                    flat
+                    dense
+                    icon="refresh"
+                    @click="loadData"
+                />
             </div>
 
-            <div class="row no-wrap q-pl-sm q-pr-sm items-center q-gutter-x-xs">
+            <div class="search row no-wrap q-pl-sm q-pr-sm items-center q-gutter-x-xs">
                 <q-input
                     v-model="search[keyword]"
                     class="col"
-                    standout
+                    borderless
                     dense
                     placeholder="请输入关键字"
                     @keyup.enter="loadData"
@@ -21,17 +31,6 @@
                         <q-icon name="search" />
                     </template>
                 </q-input>
-
-                <q-space />
-
-                <q-btn
-                    color="primary"
-                    flat
-                    dense
-                    round
-                    icon="refresh"
-                    @click="loadData"
-                />
             </div>
         </div>
 
@@ -190,9 +189,14 @@ export default {
         background: rgb($primary, 0.1)
         font-weight: bolder
 
+    .search
+        background: $grey-1
 .body--dark
     .x-active-item
         color: $primary
         background: rgb($primary, 0.1)
         font-weight: bolder
+
+    .search
+        background: $grey-9
 </style>

@@ -7,7 +7,7 @@
             mobile-arrows
             align="left"
             class="tabs"
-            active-class="active glossy"
+            active-class="active"
         >
             <q-tab
                 v-for="collectTab in collectTabs"
@@ -18,30 +18,12 @@
                 @click="onNavTab(collectTab)"
             >
                 <q-icon
-                    size="md"
+                    size="sm"
                     :name="collectTab?.meta?.icon||'lightbulb'"
                 />
                 <div class="text-subtitle2">
                     {{ collectTab?.meta?.title }}
                 </div>
-                <x-cascade
-                    v-if="collectTab.children && collectTab.children.length>0"
-                    :data-source="collectTab.children"
-                >
-                    <template #item="item">
-                        <q-item-section @click="onNavTab(item)">
-                            <div class="row no-wrap items-center q-gutter-x-sm">
-                                <q-icon
-                                    size="20px"
-                                    :name="item.meta?.icon"
-                                />
-                                <q-item-label lines="1">
-                                    {{ item.meta?.title }}
-                                </q-item-label>
-                            </div>
-                        </q-item-section>
-                    </template>
-                </x-cascade>
             </q-tab>
         </q-tabs>
     </div>
@@ -50,7 +32,6 @@
 <script setup lang="ts">
 import { NavTab, useNavTabStore } from '@/store/settings/navigation';
 import { computed } from 'vue';
-import XCascade from '@/components/XCascade/index.vue';
 import useLayoutStore from '@/store/settings/layout';
 import { SettingsEnum } from '@/tools/http';
 import { useRouter } from '@/plugins/router';
@@ -91,7 +72,13 @@ const collectTabs = computed(() => {
     return [...parentTree, ...otherTree];
 });
 const onNavTab = (nav: NavTab) => {
-    if (nav.children && nav.children.length > 0) return;
+    if (nav.children && nav.children.length > 0) {
+        useLayoutStore().openCardMenu = true;
+        useNavTabStore().openCardMenus = nav.children;
+        return;
+    }
+    useNavTabStore().openCardMenus = [];
+
     useRouter.push({ path: nav.path as any });
 };
 const navHeight = computed(() => `${useLayoutStore().headerHeight - 5}px`);

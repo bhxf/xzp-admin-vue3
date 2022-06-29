@@ -38,6 +38,7 @@ export const menuForm:Field[] = [
         components: 'input',
         required: true,
         componentsProps: {
+            autogrow: true,
             rules: [(val: any) => (val && val.length > 0) || ('请输入组件名称')],
         },
     },
@@ -134,6 +135,7 @@ export const menuColumns:Column[] = [
         edit: true,
         components: 'input',
         componentsProps: {
+            autogrow: true,
             validate: (val: number, err: any) => {
                 if (!val) {
                     err.error = true;

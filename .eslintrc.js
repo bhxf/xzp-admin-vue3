@@ -27,6 +27,8 @@ module.exports = {
         '@typescript-eslint',
     ],
     rules: {
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': 'error',
         indent: ['error', 4],
         'vue/html-indent': ['error', 4],
         'vue/script-indent': ['error', 4],

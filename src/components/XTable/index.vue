@@ -1,97 +1,129 @@
 <template>
     <div
-        :style="height"
-        class="flex column no-wrap q-pa-xs"
+        :style="{height}"
+        class="flex column no-wrap"
     >
-        <div class="col-auto flex column q-pa-xs q-gutter-y-xs">
-            <div class="tools flex full-width items-center q-gutter-x-sm">
+        <div class="col-auto flex column">
+            <div class="tools q-pa-xs q-gutter-x-xs flex full-width items-center justify-start">
                 <x-btn-group :btn-list="btnList" />
+            </div>
 
-                <q-separator
-                    v-if="btnList.length>0"
-                    vertical
-                    inset
-                />
-
-                <div class="flex row q-gutter-x-xs justify-start items-center">
-                    <q-btn
-                        color="primary"
-                        round
-                        dense
-                        flat
-                        icon="o_download"
-                        @click="loadData"
-                    >
-                        <q-tooltip>导出</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                        color="primary"
-                        round
-                        dense
-                        flat
-                        icon="search"
-                    >
-                        <x-search-form
-                            :search-list="searchList"
-                            @onSearch="onSearch"
-                        />
-                        <q-tooltip>高级查询</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                        color="primary"
-                        round
-                        dense
-                        flat
-                        icon="tune"
-                    >
-                        <x-field-setting />
-                        <q-tooltip>列设置</q-tooltip>
-                    </q-btn>
-                </div>
-
-                <q-space />
-
+            <div class="full-width relative-position q-pr-sm q-pl-sm flex row items-center q-gutter-x-xs input-search">
                 <q-input
                     v-model="filter"
                     class="col-3"
-                    standout
                     dense
+                    borderless
                     placeholder="请输入关键字"
                 >
                     <template #append>
                         <q-icon name="search" />
                     </template>
                 </q-input>
+
+                <q-space />
+
                 <q-btn
-                    color="primary"
-                    round
                     dense
                     flat
+                    color="primary"
+                    icon="r_download"
+                    @click="loadData"
+                >
+                    <q-tooltip>导出</q-tooltip>
+                </q-btn>
+
+                <q-btn
+                    dense
+                    flat
+                    color="primary"
+                    icon="r_tune"
+                >
+                    <x-field-setting />
+                    <q-tooltip>列设置</q-tooltip>
+                </q-btn>
+                <q-btn
+                    dense
+                    flat
+                    color="primary"
                     icon="refresh"
                     @click="loadData"
                 >
                     <q-tooltip>刷新</q-tooltip>
                 </q-btn>
-            </div>
+                <q-btn
+                    color="primary"
+                    flat
+                    dense
+                    :icon="showPopup?'r_keyboard_double_arrow_down':'keyboard_double_arrow_up'"
+                    @click="showPopup = !showPopup"
+                >
+                    <q-tooltip>高级查询</q-tooltip>
+                </q-btn>
 
-            <div class="full-width flex row q-gutter-x-xs" />
+                <div
+                    v-show="showPopup"
+                    style="position: absolute;z-index: 4;top: 41px;left: -4px;"
+                    class="filter layout-shadow-up"
+                >
+                    <div class="column">
+                        <div class="row q-gutter-sm q-pa-sm items-center justify-start col-auto">
+                            <q-btn
+                                dense
+                                flat
+                                color="primary"
+                                icon="r_add"
+                            />
+                            <q-btn
+                                dense
+                                flat
+                                color="primary"
+                                icon="r_search"
+                            />
+                            <q-btn
+                                dense
+                                flat
+                                color="primary"
+                                icon="r_restart_alt"
+                            />
+                        </div>
+
+                        <q-separator />
+
+                        <div class="row col q-pa-md q-gutter-md">
+                            <q-input
+                                v-for="i in 10"
+                                :key="i"
+                                class="col-2"
+                                dense
+                                standout
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <q-table
             ref="tableRef"
-            v-bind="$attrs"
-            v-model:pagination="pagination"
-            flat
 
+            v-bind="$attrs"
+
+            v-model:pagination="pagination"
+
+            flat
             class="x-table col"
-            :hide-pagination="hidePagination"
 
             :loading="loading"
+            :hide-pagination="hidePagination"
+            :separator="separator"
             :rows="dataSource"
             :row-key="rowKey"
             :selection="selection"
             :rows-per-page-options="rowsPerPageOptions"
             :columns="newColumns"
             :visible-columns="visibleColumns"
+            :bordered="bordered"
+
             @request="onRequest"
         >
             <template #header="props">
@@ -107,10 +139,18 @@
                         v-for="col in props.cols"
                         :key="col.name"
                         :props="props"
-                        :style="getThStyle(col)"
+                        :style="{...getThStyle,minWidth:`${thWidth[col.name]}px`}"
                         class="text-weight-bold"
                     >
                         {{ col.label }}
+                        <q-icon
+                            v-if="col?.drag === true"
+                            name="drag_indicator"
+                            color="grey-8"
+                            style="cursor: move;float: right"
+                            size="1.5em"
+                            @mousedown="()=>onMousedown(col)"
+                        />
                     </q-th>
                 </q-tr>
             </template>
@@ -137,7 +177,7 @@
                                 class="flex no-wrap items-center justify-center q-gutter-x-sm"
                             >
                                 <q-btn
-                                    v-if="props.row.edit !== true"
+                                    v-if="props.row.edit !== true && openEdit === false"
                                     flat
                                     round
                                     dense
@@ -225,7 +265,7 @@
                                     </q-popup-edit>
                                 </template>
                                 <template
-                                    v-else-if="edit === 'row' && col?.edit === true && props.row.edit === true"
+                                    v-else-if="edit === 'row' && col?.edit === true && (props.row.edit === true || openEdit === true)"
                                 >
                                     <x-field
                                         v-if="col?.componentsProps?.type === 'number'"
@@ -265,15 +305,18 @@
 
 import {
     XBtnGroup,
-    Column, ResultColumn, SearchColumn, XSearchForm, BtnGroup, getComponentsByName, BaseFunctionReturn,
+    Column, ResultColumn, SearchColumn, BtnGroup, getComponentsByName, BaseFunctionReturn,
 } from '@/components';
-import { computed, provide, ref } from 'vue';
+import {
+    computed, provide, ref,
+} from 'vue';
 import XFieldSetting from '@/components/XTable/XFieldSetting.vue';
 import XField from '@/components/XForm/XField.vue';
 import { actionRef } from '@/tools/action/curd';
 import { v4 } from 'uuid';
 import { dialog, notify } from '@/hooks/message';
 import { clone } from 'lodash-es';
+import { BaseObj } from '@/types';
 
 interface XTableProps {
     api?: (search: any) => any,
@@ -290,12 +333,16 @@ interface XTableProps {
     searchList?: SearchColumn[],
     rowKey?: string,
     selection?: 'multiple' | 'single',
+    separator?: 'cell' | 'none' | 'horizontal' | 'vertical',
     rowsPerPageOptions?: number[],
     edit?: 'cell' | 'row' | '',
     action?: any,
+    bordered?: boolean,
     loadFirst?: boolean,
+    hideTools?: boolean,
     hideSerialNumber?: boolean,
     hidePagination?: boolean,
+    openEdit?: boolean,
     pageSize?: number,
 }
 const props = withDefaults(defineProps<XTableProps>(), {
@@ -315,9 +362,13 @@ const props = withDefaults(defineProps<XTableProps>(), {
     resultKey: 'list',
     rowKey: 'ID',
     selection: 'multiple',
+    separator: 'horizontal',
+    bordered: false,
     loadFirst: true,
+    hideTools: false,
     hidePagination: false,
     hideSerialNumber: false,
+    openEdit: false,
     pageSize: 25,
     resultPage: {
         page: 'page',
@@ -332,6 +383,8 @@ const { tableRef } = actionRef();
 const filter = ref('');
 const query = ref(props.search || {});
 const loading = ref(false);
+const showPopup = ref(false);
+
 const pagination = ref<any>({
     page: 1,
     rowsPerPage: 50,
@@ -339,12 +392,12 @@ const pagination = ref<any>({
 const editData = ref<any>({});
 const dataSource = ref<any[]>([]);
 const newColumns = ref<Column[]>(clone(props.columns));
+const thWidth = ref<BaseObj>({});
 
 const getThStyle = computed(() => (col:Column):string => {
-    let defaultStyle = 'textAlign:left;';
-    if (col.align) defaultStyle = `textAlign:${col.align};`;
-    if (col.width) defaultStyle += `minWidth:${col.width}px;`;
-    return defaultStyle;
+    const style:any = { textAlign: col.align };
+    if (col.width) style.minWidth = col.width;
+    return style;
 });
 const getTdStyle = computed(() => (col:Column):any => {
     const style:any = { textAlign: col.align };
@@ -408,6 +461,10 @@ const loadData = async (params: any = {}) => {
 
     dataSource.value = afterFormat(list);
 };
+const clearData = () => {
+    dataSource.value = [];
+};
+const getDataSource = () => dataSource.value;
 
 const afterFormat = (list:any[]) => {
     let newList:any[] = list;
@@ -499,6 +556,18 @@ const onRequest = async (props: any) => {
     await loadData({ page, pageSize: rowsPerPage, ...props.filter });
 };
 
+const onMousedown = (col:Column) => {
+    const onMouseMove = (event:any) => {
+        thWidth.value[col.name] += (event?.movementX || 0);
+    };
+    const onMouseup = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseup);
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseup);
+};
+
 const init = () => {
     if (props.edit === 'row') {
         newColumns.value.push({
@@ -530,6 +599,7 @@ const init = () => {
         if (!item.align) item.align = 'left';
         if (!item.field) item.field = item.name;
         item.show = item.show !== false;
+        thWidth.value[item.name] = item.width;
         if (typeof item.components === 'string') item.components = getComponentsByName(item.components || 'input');
         item.componentsProps = Object.assign(defaultComponentsProps, item.componentsProps);
     });
@@ -544,7 +614,9 @@ const init = () => {
 init();
 
 provide('newColumns', newColumns);
-defineExpose({ loadData, addRow, delRowByKey });
+defineExpose({
+    loadData, clearData, addRow, delRowByKey, getDataSource,
+});
 
 </script>
 
@@ -596,7 +668,7 @@ export default {
     td:last-child, th:last-child
         position: sticky
         right: 0
-        box-shadow: -6px 0 6px 0 rgb(0 0 0 / 5%)
+        box-shadow: -5px 0 6px 0 rgb(0 0 0 / 5%)
         background: white
 
 .body--light
@@ -615,6 +687,12 @@ export default {
             z-index: 2
             background: $grey-11
 
+    .input-search
+        background: $grey-1
+
+    .filter
+        background: white
+
 .body--dark
     .tools
         background: $dark
@@ -628,5 +706,11 @@ export default {
 
         tr th
             background: $grey-10
+
+    .input-search
+        background: $grey-9
+
+    .filter
+        background: $grey-10
 
 </style>

@@ -19,7 +19,7 @@
                         ...field,
                         getObj,
                         updateObj,
-                        updateObjConfig
+                        updateObjConfig,
                     }"
                     v-model="formInfo[field.name]"
                 />
@@ -65,6 +65,7 @@ const updateObjConfig = (obj:any) => {
 
 const getFields = computed(() => {
     const defaultComponentsProps = {
+        dense: true,
         outlined: false,
         standout: '',
         stackLabel: true,
@@ -72,12 +73,15 @@ const getFields = computed(() => {
         clearable: true,
     };
     const result = newFields.value.map((item) => {
+        const isLabels = ['toggle', 'checkbox', 'radio'];
+        if (item.components && isLabels.includes(item.components.toString())) {
+            if (item.isLabel !== true) item.isLabel = true;
+        }
         if (typeof item.components === 'string') item.components = getComponentsByName(item.components || 'input');
 
         if (item.required === true) {
             if (!item.componentsProps) item.componentsProps = {};
             item.componentsProps.lazyRules = true;
-            // item.componentsProps.hint = '这是必填的';
         }
         item.componentsProps = { ...defaultComponentsProps, ...item.componentsProps };
 

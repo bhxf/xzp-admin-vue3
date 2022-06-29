@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { login, LoginRequest, User } from '@/api/system/login';
 import { useRouter } from '@/plugins/router';
 import { SettingsEnum } from '@/tools/http';
-import { loading, notify } from '@/hooks/message';
+import { dialog, loading, notify } from '@/hooks/message';
 import { getSysDictionaryDetailAllList } from '@/api/system/dictionary';
 
 interface BaseStore {
@@ -10,10 +10,14 @@ interface BaseStore {
     token: string | null,
 }
 
-export function getUser() {
+export const getUser = () => {
     const user = sessionStorage.getItem(SettingsEnum.USER);
     return user && JSON.parse(user);
-}
+};
+export const resetDictionary = async () => {
+    const dictionary = await getSysDictionaryDetailAllList();
+    sessionStorage.setItem(SettingsEnum.DICTIONARY, JSON.stringify(dictionary.list));
+};
 
 export const useBaseStore = defineStore('baseStore', {
     state: (): BaseStore => <BaseStore>{
@@ -39,8 +43,7 @@ export const useBaseStore = defineStore('baseStore', {
                 sessionStorage.setItem(SettingsEnum.USER, JSON.stringify(result.user));
 
                 // 获取字典
-                const dictionary = await getSysDictionaryDetailAllList();
-                sessionStorage.setItem(SettingsEnum.DICTIONARY, JSON.stringify(dictionary.list));
+                await resetDictionary();
 
                 const router = useRouter;
                 await router.push({ path: '/' });
@@ -53,10 +56,12 @@ export const useBaseStore = defineStore('baseStore', {
             }
         },
         async handlerLogout() {
-            const router = useRouter;
-            await router.push({ path: '/login' });
-            notify.success(`${this.user?.userName}已退出系统`);
-            this.clearUser();
+            dialog.confirm('退出提示', '确定要注销账号吗？', async () => {
+                const router = useRouter;
+                await router.push({ path: '/login' });
+                notify.success(`${this.user?.userName}已退出系统`);
+                this.clearUser();
+            }, () => {});
         },
     },
 });

@@ -2,7 +2,7 @@
     <q-page-sticky
         expand
         position="top"
-        class="shadow-up-5"
+        class="shadow-up-1"
     >
         <q-toolbar class="nav-tabs q-pa-none">
             <div class="row no-wrap full-width items-center">
@@ -23,10 +23,10 @@
                             :key="navTab.path"
                             class="tab"
                             :name="navTab.path"
-                            content-class="q-gutter-x-xs"
+                            content-class="q-gutter-x-sm"
                         >
                             <q-icon
-                                size="sm"
+                                size="xs"
                                 :name="navTab?.meta?.icon||'r_lightbulb'"
                             />
                             <div class="text-caption">
@@ -37,7 +37,7 @@
                                 flat
                                 round
                                 dense
-                                size="sm"
+                                size="xs"
                                 @click.stop="closeNavTab(navTab.path)"
                             >
                                 <q-icon
@@ -177,6 +177,7 @@ export default {
 .nav-tabs
     ::v-deep(.q-tab__indicator)
         height: 4px !important
+        border-radius: 5px
 
     min-height: v-bind(navHeight)
 
@@ -192,7 +193,8 @@ export default {
 
         .active
             color: $primary
-            background-color: rgb($primary,0.1)
+            background-color: white
+            border-radius: 5px
 
         .tabs
             color: $grey-9
@@ -204,6 +206,7 @@ export default {
         .active
             color: white
             background-color:  rgb($primary,0.1)
+            border-radius: 5px
 
         .tabs
             color: white

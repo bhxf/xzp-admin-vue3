@@ -1,4 +1,4 @@
-import { DictionaryEnum, getDictionaryById } from '@/tools/dictionary';
+import { DictionaryEnum, getDictionaryByType } from '@/tools/dictionary';
 import { Column } from '@/components';
 
 export const apiColumns:Column[] = [
@@ -59,7 +59,7 @@ export const apiColumns:Column[] = [
         components: 'select',
         componentsProps: {
             emitValue: true,
-            options: getDictionaryById(DictionaryEnum.API_METHOD_TYPE)
+            options: getDictionaryByType(DictionaryEnum.API_METHOD_TYPE)
                 .map((item:any) => ({ label: item.label, value: item.label })),
             validate: (val: string, err:any) => {
                 if (!val) {

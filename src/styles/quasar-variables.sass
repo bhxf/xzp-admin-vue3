@@ -1,18 +1,25 @@
 // FILE (create it): src/quasar-variables.sass
 
-$primary   : #1976D2
-$secondary : #26A69A
-$accent    : #9C27B0
+$primary: #1976D2
+$secondary: #26A69A
+$accent: #9C27B0
 
-$dark      : #1D1D1D
+$dark: #1D1D1D
 
-$positive  : #21BA45
-$negative  : #C10015
-$info      : #31CCEC
-$warning   : #F2C037
+$positive: #21BA45
+$negative: #C10015
+$info: #31CCEC
+$warning: #F2C037
 
-.bg-tab
-  background: rgba($primary,0.1)
+$layout-shadow-color: #eeebeb
+
+.body--light
+  .layout-shadow-up
+    box-shadow:  -5px 5px 15px #e7e6e6, 5px 7px 15px #ffffff !important
+
+.body--dark
+  .layout-shadow-up
+    box-shadow:  -5px 5px 15px $dark, 5px 7px 15px $dark !important
 
 
 

@@ -1,13 +1,28 @@
 <template>
-    <component
-        v-bind="{...componentsProps,...errorObj}"
-        :is="components"
+    <div class="column">
+        <div
+            v-if="label && isLabel !== true"
+            class="row items-center justify-start q-pl-xs q-gutter-x-xs"
+        >
+            <div class="field-label">
+                {{ label }}
+            </div>
+            <q-icon
+                v-if="required===true"
+                color="red"
+                name="r_star"
+            />
+        </div>
 
-        v-model="val"
-        :label="label"
-        :required="required"
-    >
-    </component>
+        <component
+            v-bind="{...componentsProps,...errorObj}"
+            :is="components"
+
+            v-model="val"
+            :required="required"
+            :label="isLabel?label:undefined"
+        />
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -16,6 +31,7 @@ import { ChangeCallback } from '@/components';
 
 interface FieldProps {
     label: string,
+    isLabel?: boolean,
     components: any,
     componentsProps?: any,
     errorObj?: any,
@@ -29,6 +45,8 @@ interface FieldProps {
 }
 
 const props = withDefaults(defineProps<FieldProps>(), {
+    label: '',
+    isLabel: false,
     modelValue: null,
     required: false,
     componentsProps: undefined,
@@ -65,4 +83,12 @@ export default {
 </script>
 
 <style scoped lang="sass">
+
+.body--light
+    .field-label
+        color: $grey-9
+
+.body--dark
+    .field-label
+        color: white
 </style>

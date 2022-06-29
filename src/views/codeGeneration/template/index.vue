@@ -1,171 +1,174 @@
 <template>
     <default-content>
-        <q-splitter
-            v-model="splitterModel"
-            unit="px"
-        >
-            <template #before>
-                <div
-                    class="flex column"
-                    :style="getHeight"
-                >
-                    <x-tree
-                        ref="treeRef"
-
-                        :api="getCodeTemplateTree"
-
-                        result-key="list"
-                        node-key="ID"
-                        label-key="name"
-
-                        @update:selected="updateSelected"
+        <template #default="prop">
+            <q-splitter
+                v-model="splitterModel"
+                unit="px"
+            >
+                <template #before>
+                    <div
+                        class="flex column"
+                        :style="{height:prop.pageHeight}"
                     >
-                        <template #tools>
-                            <q-btn
-                                color="primary"
-                                flat
-                                dense
-                                round
-                                icon="r_folder_open"
-                                @click="onAddFolder"
-                            >
-                                <q-tooltip>新增文件夹</q-tooltip>
-                            </q-btn>
-                            <q-btn
-                                color="primary"
-                                flat
-                                dense
-                                round
-                                icon="r_description"
-                                @click="onAddFile"
-                            >
-                                <q-tooltip>新增文件</q-tooltip>
-                            </q-btn>
-                            <q-btn
-                                color="orange"
-                                :disable="isEdit"
-                                flat
-                                dense
-                                round
-                                icon="r_edit"
-                                @click="onEditName"
-                            >
-                                <q-tooltip>修改名称</q-tooltip>
-                            </q-btn>
-                            <q-btn
-                                :disable="isDel"
-                                flat
-                                dense
-                                round
-                                icon="r_delete"
-                                color="red"
-                                @click="onDelete"
-                            />
-                        </template>
-                        <template #default-header="prop">
-                            <div class="row items-center">
-                                <q-icon :name="prop.node.codeType === 'folder' ?'r_folder_open' :'r_description'"/>
-                                <div class="text-weight-bold">
-                                    {{ prop.node.name }}
-                                </div>
-                            </div>
-                            <q-menu
-                                class="shadow-10 text-weight-medium text-grey-8"
-                                touch-position
-                                context-menu
-                                auto-close
-                            >
-                                <q-list
-                                    dense
-                                    padding
-                                >
-                                    <q-item
-                                        clickable
-                                        @click="onAddFolder(prop.node)"
-                                    >
-                                        <q-item-section>
-                                            <div class="row no-wrap items-center q-gutter-x-sm">
-                                                <q-icon
-                                                    color="primary"
-                                                    size="xs"
-                                                    name="r_folder_open"
-                                                />
-                                                <q-item-label lines="1">
-                                                    新建文件夹
-                                                </q-item-label>
-                                            </div>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item
-                                        clickable
-                                        @click="onAddFile(prop.node)"
-                                    >
-                                        <q-item-section>
-                                            <div class="row no-wrap items-center q-gutter-x-sm">
-                                                <q-icon
-                                                    color="primary"
-                                                    size="xs"
-                                                    name="r_description"
-                                                />
-                                                <q-item-label lines="1">
-                                                    新建文件
-                                                </q-item-label>
-                                            </div>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item
-                                        clickable
-                                        @click="onEditName(prop.node)"
-                                    >
-                                        <q-item-section>
-                                            <div class="row no-wrap items-center q-gutter-x-sm">
-                                                <q-icon
-                                                    color="orange"
-                                                    size="xs"
-                                                    name="r_edit"
-                                                />
-                                                <q-item-label lines="1">
-                                                    修改名称
-                                                </q-item-label>
-                                            </div>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-item
-                                        clickable
-                                        @click="onDelete(prop.node)"
-                                    >
-                                        <q-item-section>
-                                            <div class="row no-wrap items-center q-gutter-x-sm">
-                                                <q-icon
-                                                    color="red"
-                                                    size="xs"
-                                                    name="r_delete"
-                                                />
-                                                <q-item-label lines="1">
-                                                    删除
-                                                </q-item-label>
-                                            </div>
-                                        </q-item-section>
-                                    </q-item>
-                                </q-list>
-                            </q-menu>
-                        </template>
-                    </x-tree>
-                </div>
-            </template>
+                        <x-tree
+                            ref="treeRef"
 
-            <template #after>
-                <TemplateDetail ref="detailRef" />
-            </template>
-        </q-splitter>
+                            :api="getCodeTemplateTree"
+
+                            result-key="list"
+                            node-key="ID"
+                            label-key="name"
+
+                            @update:selected="updateSelected"
+                        >
+                            <template #tools>
+                                <q-btn
+                                    color="primary"
+                                    flat
+                                    dense
+                                    round
+                                    icon="r_folder_open"
+                                    @click="onAddFolder"
+                                >
+                                    <q-tooltip>新增文件夹</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    color="primary"
+                                    flat
+                                    dense
+                                    round
+                                    icon="r_description"
+                                    @click="onAddFile"
+                                >
+                                    <q-tooltip>新增文件</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    color="orange"
+                                    :disable="isEdit"
+                                    flat
+                                    dense
+                                    round
+                                    icon="r_edit"
+                                    @click="onEditName"
+                                >
+                                    <q-tooltip>修改名称</q-tooltip>
+                                </q-btn>
+                                <q-btn
+                                    :disable="isDel"
+                                    flat
+                                    dense
+                                    round
+                                    icon="r_delete"
+                                    color="red"
+                                    @click="onDelete"
+                                />
+                            </template>
+                            <template #default-header="prop">
+                                <div class="row no-wrap items-center q-gutter-x-xs">
+                                    <q-icon
+                                        :name="prop.node.codeType === 'folder' ?'r_folder_open' :'r_description'"
+                                    />
+                                    <div>
+                                        {{ prop.node.name }}
+                                    </div>
+                                </div>
+                                <q-menu
+                                    class="shadow-10 text-weight-medium text-grey-8"
+                                    touch-position
+                                    context-menu
+                                    auto-close
+                                >
+                                    <q-list
+                                        dense
+                                        padding
+                                    >
+                                        <q-item
+                                            clickable
+                                            @click="onAddFolder(prop.node)"
+                                        >
+                                            <q-item-section>
+                                                <div class="row no-wrap items-center q-gutter-x-sm">
+                                                    <q-icon
+                                                        color="primary"
+                                                        size="xs"
+                                                        name="r_folder_open"
+                                                    />
+                                                    <q-item-label lines="1">
+                                                        新建文件夹
+                                                    </q-item-label>
+                                                </div>
+                                            </q-item-section>
+                                        </q-item>
+                                        <q-item
+                                            clickable
+                                            @click="onAddFile(prop.node)"
+                                        >
+                                            <q-item-section>
+                                                <div class="row no-wrap items-center q-gutter-x-sm">
+                                                    <q-icon
+                                                        color="primary"
+                                                        size="xs"
+                                                        name="r_description"
+                                                    />
+                                                    <q-item-label lines="1">
+                                                        新建文件
+                                                    </q-item-label>
+                                                </div>
+                                            </q-item-section>
+                                        </q-item>
+                                        <q-item
+                                            clickable
+                                            @click="onEditName(prop.node)"
+                                        >
+                                            <q-item-section>
+                                                <div class="row no-wrap items-center q-gutter-x-sm">
+                                                    <q-icon
+                                                        color="orange"
+                                                        size="xs"
+                                                        name="r_edit"
+                                                    />
+                                                    <q-item-label lines="1">
+                                                        修改名称
+                                                    </q-item-label>
+                                                </div>
+                                            </q-item-section>
+                                        </q-item>
+                                        <q-item
+                                            clickable
+                                            @click="onDelete(prop.node)"
+                                        >
+                                            <q-item-section>
+                                                <div class="row no-wrap items-center q-gutter-x-sm">
+                                                    <q-icon
+                                                        color="red"
+                                                        size="xs"
+                                                        name="r_delete"
+                                                    />
+                                                    <q-item-label lines="1">
+                                                        删除
+                                                    </q-item-label>
+                                                </div>
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-list>
+                                </q-menu>
+                            </template>
+                        </x-tree>
+                    </div>
+                </template>
+
+                <template #after>
+                    <TemplateDetail ref="detailRef" />
+                </template>
+            </q-splitter>
+        </template>
     </default-content>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import XTree from '@/components/XTree/index.vue';
 import { notify } from '@/hooks/message';
-import useLayoutStore from '@/store/settings/layout';
 import {
     actionCondition,
     actionConst, actionLoading, actionRef, actionTitle,
@@ -295,8 +298,6 @@ const onDelete = (node:any) => {
 };
 
 const splitterModel = ref(300);
-const getHeight = computed(() => ({ height: useLayoutStore().getPageHeight }));
-
 </script>
 <script lang="ts">
 export default {

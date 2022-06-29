@@ -11,7 +11,7 @@ import {
     QRange,
     QSelect,
     QTime,
-    QToggle, QTree,
+    QToggle, QTree, QBtnProps,
 } from 'quasar';
 import XBtnGroup from '@/components/XBtnGroup/index.vue';
 import XField from '@/components/XForm/XField.vue';
@@ -68,11 +68,13 @@ export interface TreeRef {
   treeRef:QTree
 }
 export interface TableRef {
+  clearData: BaseFunction,
   loadData: BaseFunction,
   addRow: BaseFunction,
   delRowByKey: BaseFunction,
   setFullscreen: () => void,
   exitFullscreen: () => void,
+  getDataSource: BaseFunctionReturn
 }
 export interface DetailRef{
   loadData:BaseFunction
@@ -81,12 +83,12 @@ export interface FormAreaRef{
   updateAreaLoading:BaseFunction
 }
 
-export interface BtnGroup{
-  icon?: string,
-  key: string,
-  color?: string,
+export interface BtnGroup extends QBtnProps{
+  key?: string,
   tooltip?: string,
+  class?:string,
   isDisable?: () => boolean,
+  isLoading?: () => boolean,
   onClick:BaseFunction
 }
 export interface FormRef {
@@ -110,11 +112,13 @@ export interface SearchColumn {
 export interface Column {
   name: string,
   label: string,
+  isLabel?: boolean,
   field?: string | BaseFunction,
   required?: boolean,
   defaultValue?: any,
   autoWidth?: boolean,
   show?: boolean,
+  drag?: boolean,
   pt?: string,
   align?: 'left' | 'right' | 'center',
   sortable?: boolean,
@@ -138,6 +142,7 @@ export interface ResultColumn {
 }
 export interface Field {
   label: string,
+  isLabel?: boolean,
   name: string,
   col?: number,
   required?: boolean,

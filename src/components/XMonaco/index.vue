@@ -88,7 +88,7 @@ const initMonaco = async () => {
 
 watch(() => $q.dark.isActive, (val) => {
     monaco.editor.setTheme(val ? 'vs-dark' : 'vs-light');
-});
+}, { immediate: true });
 
 initMonaco();
 

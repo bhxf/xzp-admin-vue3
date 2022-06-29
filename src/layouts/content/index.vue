@@ -45,7 +45,7 @@ const getKeepAlive = computed(() => {
 });
 
 const pagePadding = computed(() => `${layoutStore.pagePadding}px`);
-const pagePaddingRight = computed(() => `${layoutStore.toolsWidth + 25}px`);
+const pagePaddingRight = computed(() => `${layoutStore.toolsWidth}px`);
 
 </script>
 <script lang="ts">

@@ -130,10 +130,9 @@
 
 <script setup lang="ts">
 import { NavTab, useNavTabStore } from '@/store/settings/navigation';
-import { computed, ref, watch } from 'vue';
-import XScrollArea from '@/components/XScrollArea/index.vue';
-import XCascadeList from '@/components/XCascade/List.vue';
+import { computed, ref } from 'vue';
 import XCascade from '@/components/XCascade/index.vue';
+import { useRouter } from '@/plugins/router';
 
 const filter = ref<string>('');
 
@@ -142,7 +141,7 @@ const allNavTabs = computed(() => navTabStore.allNavTabs);
 const allNavTabList = computed(() => navTabStore.getAllNavTabList);
 
 const onAddNavTab = (nav: NavTab) => {
-    navTabStore.currentNavTab = nav;
+    useRouter.push({ path: nav.path as string });
     navTabStore.openMenu = false;
 };
 const onCollect = (nav: NavTab) => {

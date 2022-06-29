@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-        <div class="col-8 q-pa-md">
+    <div class="row q-pl-sm q-pr-sm">
+        <div class="col-8 q-pa-sm">
             <q-card flat>
                 <q-card-section>
                     <div
@@ -10,7 +10,7 @@
                 </q-card-section>
             </q-card>
         </div>
-        <div class="col-4 q-pa-md">
+        <div class="col-4 q-pa-sm">
             <q-card flat>
                 <q-card-section>
                     <div
@@ -20,7 +20,7 @@
                 </q-card-section>
             </q-card>
         </div>
-        <div class="col-4 q-pa-md">
+        <div class="col-4 q-pa-sm">
             <q-card flat>
                 <q-card-section>
                     <div
@@ -30,7 +30,7 @@
                 </q-card-section>
             </q-card>
         </div>
-        <div class="col-4 q-pa-md">
+        <div class="col-4 q-pa-sm">
             <q-card flat>
                 <q-card-section>
                     <div
@@ -40,7 +40,7 @@
                 </q-card-section>
             </q-card>
         </div>
-        <div class="col-4 q-pa-md">
+        <div class="col-4 q-pa-sm">
             <q-card flat>
                 <q-card-section>
                     <div
@@ -50,7 +50,7 @@
                 </q-card-section>
             </q-card>
         </div>
-        <div class="col-8 q-pa-md">
+        <div class="col-8 q-pa-sm">
             <q-card flat>
                 <q-card-section>
                     <div
@@ -60,7 +60,7 @@
                 </q-card-section>
             </q-card>
         </div>
-        <div class="col-4 q-pa-md">
+        <div class="col-4 q-pa-sm">
             <q-card flat>
                 <q-card-section>
                     <div

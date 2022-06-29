@@ -1,16 +1,13 @@
 <template>
-    <div>
+    <div class="row items-center justify-start q-gutter-x-sm">
         <q-btn
             v-for="(btn,index) in newBtnList"
             v-bind="btn"
             :key="index"
-            flat
-            dense
-            round
-            color="primary"
             :disable="isDisable(btn?.isDisable)"
+            :loading="isLoading(btn?.isLoading)"
         >
-            <q-tooltip>{{ btn.tooltip }}</q-tooltip>
+            <q-tooltip v-if="btn.tooltip">{{ btn.tooltip }}</q-tooltip>
         </q-btn>
     </div>
 </template>
@@ -19,6 +16,7 @@
 
 import { ref } from 'vue';
 import { BtnGroup } from '@/components';
+import { clone } from 'lodash-es';
 
 interface Props {
     btnList: BtnGroup[]
@@ -27,12 +25,28 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     btnList: () => [],
 });
+const newBtnList = ref<BtnGroup[]>(clone(props.btnList));
 
-const newBtnList = ref<BtnGroup[]>(props.btnList);
 const isDisable = (disable: any) => {
     if (disable && typeof disable === 'function') return disable();
     return false;
 };
+const isLoading = (loading: any) => {
+    if (loading && typeof loading === 'function') return loading();
+    return false;
+};
+const init = () => {
+    newBtnList.value = newBtnList.value.map((item) => {
+        const defaultConfig = {
+            flat: true,
+            dense: true,
+            color: 'primary',
+        };
+        return Object.assign(defaultConfig, item);
+    });
+};
+
+init();
 
 </script>
 <script lang="ts">
@@ -41,5 +55,5 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="sass">
 </style>

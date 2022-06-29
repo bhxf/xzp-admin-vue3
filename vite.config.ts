@@ -25,8 +25,8 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'http://localhost:8888',
-                // target: 'http://8.142.89.150:8888',
+                // target: 'http://localhost:8888',
+                target: 'http://8.142.89.150:8888',
                 changeOrigin: true,
                 // eslint-disable-next-line no-shadow
                 rewrite: (path) => path.replace(/^\/api/, ''),

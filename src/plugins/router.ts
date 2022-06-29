@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import { SettingsEnum } from '@/tools/http';
 import { Notify } from 'quasar';
 import { useNavTabStore } from '@/store/settings/navigation';
-import { loading } from '@/hooks/message';
+import { loading, notify } from '@/hooks/message';
 
 const routes: RouteRecordRaw[] = [
     {
@@ -18,10 +18,8 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    loading.base('菜单加载中，请稍等...');
 
     const navStore = useNavTabStore();
-
     navStore.updateCurrentNavTabsByPath(to.path);
 
     // 是否需要授权
@@ -34,15 +32,14 @@ router.beforeEach(async (to, from, next) => {
     // 是否已登录过
     const token = sessionStorage.getItem(SettingsEnum.TOKEN);
     if (!token) {
-        Notify.create(
-            { type: 'negative', message: '令牌已失效，请重新登录。', position: 'top-right' },
-        );
+        notify.error('令牌已失效，请重新登录');
         next({ path: '/login' });
         return;
     }
 
     // 加载菜单
     if (!navStore.isLoadMenu) {
+        const oldNotify = notify.loading('正在加载菜单...');
         try {
             await navStore.getMenuByUser();
             navStore.isLoadMenu = true;
@@ -50,6 +47,7 @@ router.beforeEach(async (to, from, next) => {
         } catch (e) {
             next({ path: 'error' });
         } finally {
+            notify.done(oldNotify,'菜单已加载完成');
             navStore.isLoadMenu = true;
         }
     } else {
@@ -57,7 +55,6 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 router.afterEach(() => {
-    loading.hide();
 });
 
 export function setupRouter(app: any) {

@@ -36,6 +36,7 @@ interface NavStore {
     collectNavTabs: NavTab[],
     collectActive: string,
     allNavTabs: NavTab[],
+    openCardMenus: NavTab[],
 }
 const modules = import.meta.glob('@/views/**/*.vue');
 
@@ -68,6 +69,7 @@ export const useNavTabStore = defineStore('navTabStore', {
         currentNavTabs: JSON.parse(sessionStorage.getItem(SettingsEnum.TABS) || '[]'),
         collectNavTabs: [],
         allNavTabs: [],
+        openCardMenus: [],
         collectActive: sessionStorage.getItem(SettingsEnum.COLLECT_ACTIVE_TAB) || '',
     }),
     getters: {

@@ -1,31 +1,31 @@
 <template>
     <default-content>
-        <x-table
-            ref="tableRef"
-            v-model:selected="tableSelected"
+        <template #default="prop">
+            <x-table
+                ref="tableRef"
+                v-model:selected="tableSelected"
 
-            edit="row"
+                edit="row"
 
-            :api="getApiList"
-            :btn-list="btnList"
-            :height="getHeight"
-            :columns="apiColumns"
+                :api="getApiList"
+                :btn-list="btnList"
+                :height="prop.pageHeight"
+                :columns="apiColumns"
 
-            @update-done="updateDone"
-            @update-del="updateDel"
-        />
+                @update-done="updateDone"
+                @update-del="updateDel"
+            />
+        </template>
     </default-content>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { apiColumns } from '@/views/admin/api/data';
 
 import XTable from '@/components/XTable/index.vue';
 import {
     createApi, deleteApi, getApiList, updateApi, deleteApisByIds,
 } from '@/api/system/api';
-import useLayoutStore from '@/store/settings/layout';
 import { actionConst, actionRef } from '@/tools/action/curd';
 import { dialog, notify } from '@/hooks/message';
 import { BtnGroup } from '@/components';
@@ -89,8 +89,6 @@ const updateDel = async (row: BaseObj) => {
         row.loading = false;
     }
 };
-
-const getHeight = computed(() => ({ height: useLayoutStore().getPageHeight }));
 
 </script>
 <script lang="ts">
