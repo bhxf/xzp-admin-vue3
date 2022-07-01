@@ -118,6 +118,7 @@ export const fieldConfigColumns:Column[] = [
         width: 100,
         edit: true,
         required: true,
+        defaultValue: true,
         components: 'toggle',
         componentsProps: {
             validate: validateName,
@@ -156,6 +157,7 @@ export const fieldConfigColumns:Column[] = [
         width: 100,
         edit: true,
         required: true,
+        defaultValue: true,
         components: 'toggle',
         componentsProps: {
             validate: validateName,
@@ -168,6 +170,7 @@ export const fieldConfigColumns:Column[] = [
         width: 100,
         edit: true,
         required: true,
+        defaultValue: true,
         components: 'toggle',
         componentsProps: {
             validate: validateName,
@@ -180,6 +183,20 @@ export const fieldConfigColumns:Column[] = [
         width: 100,
         edit: true,
         required: true,
+        defaultValue: true,
+        components: 'toggle',
+        componentsProps: {
+            validate: validateName,
+        },
+        format: (value) => formatChip(value),
+    },
+    {
+        name: 'listEdit',
+        label: '列表是否编辑',
+        width: 100,
+        edit: true,
+        required: true,
+        defaultValue: true,
         components: 'toggle',
         componentsProps: {
             validate: validateName,
@@ -187,3 +204,18 @@ export const fieldConfigColumns:Column[] = [
         format: (value) => formatChip(value),
     },
 ];
+export const goTypeMap:any = {
+    varchar: 'string',
+    datetime: 'time.Time',
+    bigint: 'uint',
+};
+export const formTypeMap:any = {
+    varchar: 'input',
+    datetime: 'date',
+    bigint: 'input',
+};
+export const listTypeMap:any = {
+    varchar: 'input',
+    datetime: 'date',
+    bigint: 'input',
+};

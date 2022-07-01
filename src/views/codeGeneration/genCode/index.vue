@@ -72,7 +72,7 @@ const splitterModel = ref(300);
 </script>
 <script lang="ts">
 export default {
-    name: 'CodeTemplate',
+    name: 'GenCode',
 };
 </script>
 

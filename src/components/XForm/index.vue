@@ -65,9 +65,7 @@ const updateObjConfig = (obj:any) => {
 
 const getFields = computed(() => {
     const defaultComponentsProps = {
-        dense: true,
-        outlined: false,
-        standout: '',
+        dense: false,
         stackLabel: true,
         hint: '',
         clearable: true,
@@ -116,9 +114,4 @@ export default {
 </script>
 
 <style scoped lang="sass">
-.x-form
-    ::v-deep(.q-field__bottom)
-        display: none
-    ::v-deep(.q-field--with-bottom)
-        padding-bottom: 0
 </style>

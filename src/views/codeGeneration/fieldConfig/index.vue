@@ -68,22 +68,29 @@ import { BaseObj } from '@/types';
 import {
     getColumn, getDB, getTables, updateFieldConfig,
 } from '@/api/codeGeneration/field';
-import { fieldConfigColumns } from '@/views/codeGeneration/fieldConfig/data';
+import {
+    fieldConfigColumns, formTypeMap, goTypeMap, listTypeMap,
+} from '@/views/codeGeneration/fieldConfig/data';
 import { QTreeNode } from 'quasar';
 import DefaultContent from '@/layouts/content/DefaultContent.vue';
 import { BtnGroup } from '@/components';
+import { humpLower, humpUpper, toBoolByStr } from '@/tools/format';
 
 const btnList:BtnGroup[] = [
     {
         label: '保存配置',
+        icon: 'r_add',
         flat: false,
+        unelevated: true,
         isLoading: () => loadings.value.save,
         isDisable: () => nodeInfo.value?.type !== 'table',
         onClick: () => saveFieldConfig(),
     },
     {
         label: '重置配置',
+        icon: 'r_cached',
         flat: false,
+        unelevated: true,
         isLoading: () => loadings.value.save,
         isDisable: () => nodeInfo.value?.type !== 'table',
         onClick: () => resetFieldConfig(),
@@ -170,7 +177,19 @@ const updateDel = async (row: BaseObj) => {
 const apiAfterFormat = (result:any) => {
     const columns = JSON.parse(result.columns || '[]');
     if (columns.length > 0) return columns;
-    return result.oldColumns;
+    return result.oldColumns.map((item:any) => {
+        const lower = humpLower(item.dataField, '_');
+        const upper = humpUpper(item.dataField, '_');
+        item.goField = upper;
+        item.formField = lower;
+        item.goToJsonName = lower;
+        item.formRequired = toBoolByStr(item.dataRequired, 'YES');
+
+        item.goType = goTypeMap[item.dataType] || 'string';
+        item.formType = formTypeMap[item.dataType] || 'string';
+        item.listType = listTypeMap[item.dataType] || 'string';
+        return item;
+    });
 };
 
 loadTreeData();

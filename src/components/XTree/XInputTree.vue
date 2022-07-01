@@ -26,10 +26,13 @@
                 color="red"
             />
         </template>
-        <q-popup-proxy class="shadow-10">
+        <q-menu
+            fit
+            class="shadow-10"
+        >
             <div
                 class="flex column"
-                style="height: 350px;"
+                style="height: 350px;min-width: 300px;"
             >
                 <XTree
                     ref="xTree"
@@ -66,7 +69,7 @@
                     </template>
                 </XTree>
             </div>
-        </q-popup-proxy>
+        </q-menu>
     </q-field>
 </template>
 

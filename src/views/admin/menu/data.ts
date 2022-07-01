@@ -1,6 +1,6 @@
 import { getMenuList } from '@/api/system/menu';
 import {
-    formatChip, formatIcon, formatLinkBtn,
+    formatChip, formatIcon,
 } from '@/tools/format';
 import { Column, Field, ValidateError } from '@/components';
 
@@ -97,7 +97,6 @@ export const menuColumns:Column[] = [
                 return true;
             },
         },
-        format: (value) => formatLinkBtn(value),
     },
     {
         name: 'icon',

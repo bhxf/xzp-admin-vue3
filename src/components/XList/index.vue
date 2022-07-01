@@ -17,7 +17,7 @@
                     @click="loadData"
                 />
             </div>
-
+            <q-separator />
             <div class="search row no-wrap q-pl-sm q-pr-sm items-center q-gutter-x-xs">
                 <q-input
                     v-model="search[keyword]"
@@ -73,7 +73,7 @@
 
         <q-separator />
 
-        <div class="flex justify-center">
+        <div class="flex justify-center q-pt-xs q-pb-xs">
             <q-pagination
                 v-model="paginationModal.page"
                 :max="paginationModal.totalPage"
@@ -189,14 +189,10 @@ export default {
         background: rgb($primary, 0.1)
         font-weight: bolder
 
-    .search
-        background: $grey-1
 .body--dark
     .x-active-item
         color: $primary
         background: rgb($primary, 0.1)
         font-weight: bolder
 
-    .search
-        background: $grey-9
 </style>

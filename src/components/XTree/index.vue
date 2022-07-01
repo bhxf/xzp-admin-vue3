@@ -44,6 +44,8 @@
                 </slot>
             </div>
 
+            <q-separator />
+
             <div class="search q-pr-sm q-pl-sm row items-center">
                 <q-input
                     v-model="filter"
@@ -195,14 +197,10 @@ export default {
 <style scoped lang="sass">
 
 .body--light
-    .search
-        background: $grey-1
     .tools
         background: white
 
 .body--dark
     .tools
         background: $dark
-    .search
-        background: $grey-9
 </style>

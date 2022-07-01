@@ -4,22 +4,8 @@
         class="flex column no-wrap"
     >
         <div class="col-auto flex column">
-            <div class="tools q-pa-xs q-gutter-x-xs flex full-width items-center justify-start">
+            <div class="tools relative-position q-pa-xs q-gutter-x-xs flex full-width items-center justify-start">
                 <x-btn-group :btn-list="btnList" />
-            </div>
-
-            <div class="full-width relative-position q-pr-sm q-pl-sm flex row items-center q-gutter-x-xs input-search">
-                <q-input
-                    v-model="filter"
-                    class="col-3"
-                    dense
-                    borderless
-                    placeholder="请输入关键字"
-                >
-                    <template #append>
-                        <q-icon name="search" />
-                    </template>
-                </q-input>
 
                 <q-space />
 
@@ -32,7 +18,6 @@
                 >
                     <q-tooltip>导出</q-tooltip>
                 </q-btn>
-
                 <q-btn
                     dense
                     flat
@@ -55,36 +40,39 @@
                     color="primary"
                     flat
                     dense
-                    :icon="showPopup?'r_keyboard_double_arrow_down':'keyboard_double_arrow_up'"
-                    @click="showPopup = !showPopup"
+                    icon="r_filter_list"
+                    @click="showFilter = !showFilter"
                 >
                     <q-tooltip>高级查询</q-tooltip>
                 </q-btn>
-
                 <div
-                    v-show="showPopup"
+                    v-show="showFilter"
                     style="position: absolute;z-index: 4;top: 41px;left: -4px;"
                     class="filter layout-shadow-up"
                 >
                     <div class="column">
                         <div class="row q-gutter-sm q-pa-sm items-center justify-start col-auto">
+                            <q-space />
                             <q-btn
                                 dense
                                 flat
                                 color="primary"
                                 icon="r_add"
+                                label="增加条件"
                             />
                             <q-btn
                                 dense
                                 flat
                                 color="primary"
                                 icon="r_search"
+                                label="开始查询"
                             />
                             <q-btn
                                 dense
                                 flat
                                 color="primary"
                                 icon="r_restart_alt"
+                                label="重置条件"
                             />
                         </div>
 
@@ -97,6 +85,66 @@
                                 class="col-2"
                                 dense
                                 standout
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <q-separator />
+
+            <div class="full-width relative-position q-pr-sm q-pl-sm flex row items-center q-gutter-x-xs input-search">
+                <q-input
+                    v-model="filter"
+                    dense
+                    borderless
+                    placeholder="请输入关键字"
+                >
+                    <template #append>
+                        <q-icon name="search" />
+                    </template>
+                </q-input>
+
+                <q-space />
+
+                <q-btn
+                    color="primary"
+                    flat
+                    dense
+                    :icon="showSearch?'r_keyboard_double_arrow_down':'keyboard_double_arrow_up'"
+                    @click="showSearch = !showSearch"
+                >
+                    <q-tooltip>更多查询</q-tooltip>
+                </q-btn>
+            </div>
+
+            <div
+                v-show="showSearch"
+            >
+                <q-separator />
+                <div class="column">
+                    <div class="row col q-pa-md justify-start q-gutter-md">
+                        <q-input
+                            v-for="i in 10"
+                            :key="i"
+                            dense
+                            standout
+                        />
+
+                        <div>
+                            <q-btn
+                                dense
+                                flat
+                                color="primary"
+                                icon="r_search"
+                                label="开始查询"
+                            />
+                            <q-btn
+                                dense
+                                flat
+                                color="primary"
+                                icon="r_restart_alt"
+                                label="重置条件"
                             />
                         </div>
                     </div>
@@ -269,14 +317,16 @@
                                 >
                                     <x-field
                                         v-if="col?.componentsProps?.type === 'number'"
-                                        v-bind="{...col,...props.row?.err?.[col.name],label:undefined}"
+                                        v-bind="{...col,...props.row?.err?.[col.name]}"
                                         v-model.number="props.row[col.name]"
+                                        :label="undefined"
                                         class="full-width"
                                     />
                                     <x-field
                                         v-else
-                                        v-bind="{...col,...props.row?.err?.[col.name],label:undefined}"
+                                        v-bind="{...col,...props.row?.err?.[col.name]}"
                                         v-model="props.row[col.name]"
+                                        :label="undefined"
                                         class="full-width"
                                     />
                                 </template>
@@ -383,7 +433,8 @@ const { tableRef } = actionRef();
 const filter = ref('');
 const query = ref(props.search || {});
 const loading = ref(false);
-const showPopup = ref(false);
+const showFilter = ref(false);
+const showSearch = ref(false);
 
 const pagination = ref<any>({
     page: 1,
@@ -687,9 +738,6 @@ export default {
             z-index: 2
             background: $grey-11
 
-    .input-search
-        background: $grey-1
-
     .filter
         background: white
 
@@ -706,9 +754,6 @@ export default {
 
         tr th
             background: $grey-10
-
-    .input-search
-        background: $grey-9
 
     .filter
         background: $grey-10

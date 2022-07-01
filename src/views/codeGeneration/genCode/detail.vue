@@ -2,7 +2,9 @@
     <div class="row justify-center items-start q-pa-lg">
         <q-list
             v-if="list.length>0"
-            class="shadow-5 rounded-borders"
+            padding
+            bordered
+            class="rounded-borders"
             style="width: 500px;"
             separator
         >
@@ -31,6 +33,8 @@
                 :key="item.name"
                 v-ripple
                 clickable
+                :active="item?.isPrimary === true"
+                active-class="bg-primary text-white rounded-borders"
             >
                 <q-item-section>
                     <div class="row no-wrap q-gutter-x-md items-center">
@@ -52,12 +56,6 @@
                         />
                     </div>
                 </q-item-section>
-                <q-badge
-                    v-if="item?.isPrimary === true"
-                    floating
-                    color="primary"
-                    label="主"
-                />
             </q-item>
             <q-item>
                 <q-btn

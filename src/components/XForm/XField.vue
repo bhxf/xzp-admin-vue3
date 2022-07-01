@@ -1,26 +1,35 @@
 <template>
-    <div class="column">
-        <div
-            v-if="label && isLabel !== true"
-            class="row items-center justify-start q-pl-xs q-gutter-x-xs"
-        >
-            <div class="field-label">
-                {{ label }}
-            </div>
-            <q-icon
-                v-if="required===true"
-                color="red"
-                name="r_star"
-            />
-        </div>
+    <div class="column x-field">
+        <!--        <div-->
+        <!--            v-if="label && isLabel !== true"-->
+        <!--            class="row items-center justify-start q-pl-xs q-gutter-x-xs"-->
+        <!--        >-->
+        <!--            <div class="field-label text-subtitle2">-->
+        <!--                {{ label }}-->
+        <!--            </div>-->
+        <!--            <q-icon-->
+        <!--                size="12px"-->
+        <!--                v-if="required===true"-->
+        <!--                color="red"-->
+        <!--                name="r_star"-->
+        <!--            />-->
+        <!--        </div>-->
 
+        <!--        <component-->
+        <!--            v-bind="{...componentsProps,...errorObj}"-->
+        <!--            :is="components"-->
+
+        <!--            v-model="val"-->
+        <!--            :required="required"-->
+        <!--            :label="isLabel?label:undefined"-->
+        <!--        />-->
         <component
             v-bind="{...componentsProps,...errorObj}"
-            :is="components"
-
             v-model="val"
+
+            :is="components"
             :required="required"
-            :label="isLabel?label:undefined"
+            :label="label"
         />
     </div>
 </template>
@@ -45,7 +54,7 @@ interface FieldProps {
 }
 
 const props = withDefaults(defineProps<FieldProps>(), {
-    label: '',
+    label: undefined,
     isLabel: false,
     modelValue: null,
     required: false,
@@ -83,7 +92,11 @@ export default {
 </script>
 
 <style scoped lang="sass">
-
+.x-field
+    ::v-deep(.q-field__bottom)
+        padding: 0
+    ::v-deep(.q-field--with-bottom)
+        padding-bottom: 4px
 .body--light
     .field-label
         color: $grey-9

@@ -1,8 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import { SettingsEnum } from '@/tools/http';
-import { Notify } from 'quasar';
 import { useNavTabStore } from '@/store/settings/navigation';
-import { loading, notify } from '@/hooks/message';
+import { notify } from '@/hooks/message';
 
 const routes: RouteRecordRaw[] = [
     {
@@ -18,7 +17,6 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-
     const navStore = useNavTabStore();
     navStore.updateCurrentNavTabsByPath(to.path);
 
@@ -44,10 +42,11 @@ router.beforeEach(async (to, from, next) => {
             await navStore.getMenuByUser();
             navStore.isLoadMenu = true;
             next({ ...to, replace: true });
+            notify.done(oldNotify, '菜单已加载完成');
         } catch (e) {
-            next({ path: 'error' });
+            notify.done(oldNotify, '菜单加载失败');
+            next({ path: '/login' });
         } finally {
-            notify.done(oldNotify,'菜单已加载完成');
             navStore.isLoadMenu = true;
         }
     } else {
