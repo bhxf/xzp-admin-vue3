@@ -77,6 +77,131 @@ export const menuForm:Field[] = [
         label: '是否关闭', name: 'closeTab', col: 3, components: 'checkbox', defaultValue: true,
     },
 ];
+export const menuSearchList:Field[] = [
+    {
+        label: '父级',
+        name: 'parentId',
+        col: 3,
+        components: 'inputTree',
+        componentsProps: {
+            api: getMenuList,
+            resultKey: 'list',
+            nodeKey: 'ID',
+            format: formatLabel,
+        },
+    },
+    {
+        label: '名称',
+        name: 'title',
+        col: 3,
+        components: 'input',
+    },
+    {
+        label: '图标', name: 'icon', col: 3, components: 'icon', defaultValue: 'r_insert_emoticon',
+    },
+    {
+        label: '组件名称',
+        name: 'name',
+        col: 3,
+        components: 'input',
+    },
+    {
+        label: '排序', name: 'sort', col: 3, components: 'input', defaultValue: 0, componentsProps: { type: 'number' },
+    },
+    {
+        label: '路由地址',
+        name: 'path',
+        col: 3,
+        components: 'input',
+    },
+    {
+        label: '组件地址',
+        name: 'component',
+        col: 3,
+        components: 'input',
+    },
+    {
+        label: '是否缓存', name: 'keepAlive', col: 3, components: 'checkbox', defaultValue: true,
+    },
+    {
+        label: '是否收藏', name: 'collect', col: 3, components: 'checkbox', defaultValue: true,
+    },
+    {
+        label: '是否关闭', name: 'closeTab', col: 3, components: 'checkbox', defaultValue: true,
+    },
+];
+export const menuFilterList:Field[] = [
+    {
+        label: '父级',
+        name: 'parentId',
+        col: 12,
+        components: 'inputTree',
+        componentsProps: {
+            api: getMenuList,
+            resultKey: 'list',
+            nodeKey: 'ID',
+            format: formatLabel,
+        },
+    },
+    {
+        label: '名称',
+        name: 'title',
+        col: 6,
+        components: 'input',
+        required: true,
+        componentsProps: {
+            rules: [(val: any) => (val && val.length > 0) || ('请输入名称')],
+        },
+    },
+    {
+        label: '图标', name: 'icon', col: 6, components: 'icon', defaultValue: 'r_insert_emoticon',
+    },
+    {
+        label: '组件名称',
+        name: 'name',
+        col: 6,
+        components: 'input',
+        required: true,
+        componentsProps: {
+            autogrow: true,
+            rules: [(val: any) => (val && val.length > 0) || ('请输入组件名称')],
+        },
+    },
+    {
+        label: '排序', name: 'sort', col: 6, components: 'input', defaultValue: 0, componentsProps: { type: 'number' },
+    },
+    {
+        label: '路由地址',
+        name: 'path',
+        col: 12,
+        components: 'input',
+        required: true,
+        defaultValue: '/',
+        componentsProps: {
+            rules: [(val: any) => (val && val.length > 0) || ('请输入路由地址')],
+        },
+    },
+    {
+        label: '组件地址',
+        name: 'component',
+        col: 12,
+        components: 'input',
+        required: true,
+        defaultValue: '/',
+        componentsProps: {
+            rules: [(val: any) => (val && val.length > 0) || ('请输入组件地址')],
+        },
+    },
+    {
+        label: '是否缓存', name: 'keepAlive', col: 3, components: 'checkbox', defaultValue: true,
+    },
+    {
+        label: '是否收藏', name: 'collect', col: 3, components: 'checkbox', defaultValue: true,
+    },
+    {
+        label: '是否关闭', name: 'closeTab', col: 3, components: 'checkbox', defaultValue: true,
+    },
+];
 export const menuColumns:Column[] = [
     {
         name: 'title',

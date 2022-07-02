@@ -139,6 +139,7 @@ export interface ResultColumn {
   name:any,
   value:any,
   type:any,
+  splicing:any,
 }
 export interface Field {
   label: string,

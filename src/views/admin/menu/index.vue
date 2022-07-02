@@ -49,7 +49,10 @@
                             </template>
                             <template #default-header="prop">
                                 <div class="row items-center q-gutter-x-xs">
-                                    <q-icon size="xs" :name="prop.node.meta?.icon" />
+                                    <q-icon
+                                        size="xs"
+                                        :name="prop.node.meta?.icon"
+                                    />
                                     <div>{{ prop.node.meta?.title }}</div>
                                 </div>
                             </template>
@@ -95,7 +98,8 @@
 
                         :search="search"
                         :btn-list="btnList"
-                        :search-list="searchList"
+                        :filter-list="menuFilterList"
+                        :search-list="menuSearchList"
                         :after-format="afterFormat"
                         :api="getBaseMenuByParentId"
                         :add-row-boj="{keepAlive: true,closeTab:true ,collect: true,sort:0}"
@@ -118,17 +122,17 @@ import { computed, nextTick, ref } from 'vue';
 import XTable from '@/components/XTable/index.vue';
 import XTree from '@/components/XTree/index.vue';
 import XForm from '@/components/XForm/index.vue';
-import { menuColumns, menuForm } from '@/views/admin/menu/data';
+import {
+    menuColumns, menuForm, menuSearchList, menuFilterList,
+} from '@/views/admin/menu/data';
 import {
     addMenu, getMenuList, getBaseMenuById, getBaseMenuByParentId, updateMenu, deleteMenu,
 } from '@/api/system/menu';
 import { dialog, notify } from '@/hooks/message';
 import XDialog from '@/components/XDialog/index.vue';
-import useLayoutStore from '@/store/settings/layout';
 import {
     actionCondition, actionConst, actionLoading, actionRef, actionTitle,
 } from '@/tools/action/curd';
-import { SearchColumn } from '@/components';
 import { BaseObj } from '@/types';
 import { clone } from 'lodash-es';
 import DefaultContent from '@/layouts/content/DefaultContent.vue';
@@ -266,17 +270,6 @@ const initMenuForm = computed(() => {
 
     return menuForm;
 });
-const searchList: SearchColumn[] = [
-    {
-        label: 'test', name: 'test1', value: '', components: 'select',
-    },
-    {
-        label: 'test2', name: 'test2', value: '', components: 'input',
-    },
-    {
-        label: 'test4', name: 'test4', value: '', components: 'select',
-    },
-];
 
 const splitterModel = ref(250);
 

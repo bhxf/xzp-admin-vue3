@@ -8,7 +8,7 @@
             v-for="field in getFields"
             v-show="field?.hidden !== true"
             :key="field.name"
-            :class="[`col-${field.col||12}`,'q-pa-xs flex column']"
+            :class="[`col-${field.col||12}`,'q-pa-xs flex column justify-center']"
         >
             <slot
                 :name="field.name"
@@ -67,6 +67,7 @@ const getFields = computed(() => {
     const defaultComponentsProps = {
         dense: false,
         stackLabel: true,
+        standout: true,
         hint: '',
         clearable: true,
     };

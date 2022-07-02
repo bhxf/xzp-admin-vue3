@@ -47,47 +47,10 @@
                 </q-btn>
                 <div
                     v-show="showFilter"
-                    style="position: absolute;z-index: 4;top: 41px;left: -4px;"
-                    class="filter layout-shadow-up"
+                    style="position: absolute;z-index: 4;top: 41px;left: 0;"
+                    class="filter layout-shadow-up full-width"
                 >
-                    <div class="column">
-                        <div class="row q-gutter-sm q-pa-sm items-center justify-start col-auto">
-                            <q-space />
-                            <q-btn
-                                dense
-                                flat
-                                color="primary"
-                                icon="r_add"
-                                label="增加条件"
-                            />
-                            <q-btn
-                                dense
-                                flat
-                                color="primary"
-                                icon="r_search"
-                                label="开始查询"
-                            />
-                            <q-btn
-                                dense
-                                flat
-                                color="primary"
-                                icon="r_restart_alt"
-                                label="重置条件"
-                            />
-                        </div>
-
-                        <q-separator />
-
-                        <div class="row col q-pa-md q-gutter-md">
-                            <q-input
-                                v-for="i in 10"
-                                :key="i"
-                                class="col-2"
-                                dense
-                                standout
-                            />
-                        </div>
-                    </div>
+                    <XFilterList :filter-list="filterList" />
                 </div>
             </div>
 
@@ -124,12 +87,7 @@
                 <q-separator />
                 <div class="column">
                     <div class="row col q-pa-md justify-start q-gutter-md">
-                        <q-input
-                            v-for="i in 10"
-                            :key="i"
-                            dense
-                            standout
-                        />
+                        <x-form :fields="searchList" />
 
                         <div>
                             <q-btn
@@ -367,6 +325,8 @@ import { v4 } from 'uuid';
 import { dialog, notify } from '@/hooks/message';
 import { clone } from 'lodash-es';
 import { BaseObj } from '@/types';
+import XForm from '@/components/XForm/index.vue';
+import XFilterList from '@/components/XTable/XFilterList.vue';
 
 interface XTableProps {
     api?: (search: any) => any,
@@ -381,6 +341,7 @@ interface XTableProps {
     columns: Column[],
     btnList?: BtnGroup[],
     searchList?: SearchColumn[],
+    filterList?: SearchColumn[],
     rowKey?: string,
     selection?: 'multiple' | 'single',
     separator?: 'cell' | 'none' | 'horizontal' | 'vertical',
@@ -403,6 +364,7 @@ const props = withDefaults(defineProps<XTableProps>(), {
     btnList: () => [],
     columns: () => [],
     searchList: () => [],
+    filterList: () => [],
     dataSource: () => [],
     rowsPerPageOptions: () => [25, 50, 100, 300, 500, 1000],
     edit: '',
