@@ -6,6 +6,10 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     container_name: go-admin-web
+    restart: unless-stopped
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
     ports:
       - "80:80"
-    restart: always
+      - "443:443"
+

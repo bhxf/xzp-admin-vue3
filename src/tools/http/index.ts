@@ -123,7 +123,7 @@ class XRequest {
 export default XRequest;
 
 const xRequest = new XRequest({
-    baseURL: '/api',
+    baseURL: '',
     timeout: 10000,
 });
 
